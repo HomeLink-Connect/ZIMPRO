@@ -5182,9 +5182,12 @@ window.addEventListener('pagehide', () => { if(call) endCall('', true); });
    App fully closed: also needs FCM_VAPID_KEY below + the Cloud Functions in /functions.
    ============================================================ */
 const FCM_VAPID_KEY = 'BKPALciNVArwUOwtSNCcC-7uSPs4FHqJNjXcqJH-9EhNMb37QVYbkKQzsPKUKRypEmszIOCy1kFf3556t-jtCig'; // Firebase console → Project settings → Cloud Messaging → Web Push certificates → Key pair
-const PUSH_ENDPOINT = '/.netlify/functions/push';
+/* Where the push server lives. On Netlify hosting leave it as is. On GitHub Pages put the full address of the
+   push server here, e.g. 'https://zimpro-push.netlify.app/.netlify/functions/push' (see the push-server README). */
+const PUSH_ENDPOINT = window.ZPL_PUSH_ENDPOINT || '/.netlify/functions/push';
 async function pushRemote(payload){
   try{
+    if(PUSH_ENDPOINT.charAt(0) === '/' && /github\.io$/.test(location.hostname)) return;   /* GitHub Pages cannot run the push function */
     const u = fb().auth.currentUser; if(!u) return;
     const t = await u.getIdToken();
     fetch(PUSH_ENDPOINT, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + t }, body:JSON.stringify(payload), keepalive:true }).catch(() => {});
