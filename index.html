@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1877F2">
+<meta name="theme-color" content="#1877F2" id="zplThemeColor">
 <title>ZimPro-Linkup App</title>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="ZimPro-Linkup">
@@ -1042,10 +1042,124 @@ select{font-size:16px;}
 .cm-rbar[hidden]{display:none}
 .cm-rbar b{color:var(--text)}
 .fbc .cm-rbar button{background:none !important;border:none;color:var(--blue) !important;font-weight:700;width:auto;height:auto;font-size:13px}
+
+/* ===================== FULL-SCREEN APP (v6) ===================== */
+html{background:var(--bg);}
+html,body{min-height:100vh;min-height:100dvh;}
+#appFrame{min-height:100vh;min-height:100dvh;}
+body{-webkit-tap-highlight-color:transparent;}
+@media(max-width:767px){
+  #appFrame{max-width:none;box-shadow:none;}
+  .bottom-nav,.pd-composer,.nt-sheet,.react-sheet,.cmm-sheet,.modal-sheet{max-width:100%;}
+}
+
+/* ===================== SWIPE TO REPLY (WhatsApp style) ===================== */
+.chat-body{overflow-x:hidden;overscroll-behavior:contain;}
+.chat-row{position:relative;}
+.chat-msg-col{z-index:1;touch-action:pan-y;}
+.swipe-ic{position:absolute;top:50%;left:0;width:34px;height:34px;margin-top:-17px;border-radius:50%;background:var(--surface-3);color:var(--text-dim);display:flex;align-items:center;justify-content:center;font-size:14px;opacity:0;transform:scale(.4);z-index:0;pointer-events:none;transition:background .15s,color .15s;}
+.swipe-ic.armed{background:var(--blue);color:#fff;}
+
+/* ===================== LAUNCH SPLASH ===================== */
+#zplIntro{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(160deg,#1877F2 0%,#0F5FD1 48%,#0B3D91 100%);color:#fff;transition:opacity .55s ease,transform .55s ease;}
+#zplIntro.zi-out{opacity:0;transform:scale(1.05);pointer-events:none;}
+#zplIntro:not(.zi-go) *{animation-play-state:paused !important;}
+.zi-orb{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),rgba(255,255,255,0) 70%);animation:ziFloat 7s ease-in-out infinite;}
+.zi-orb.a{width:260px;height:260px;left:-90px;top:-70px;}
+.zi-orb.b{width:340px;height:340px;right:-140px;top:34%;animation-delay:-3s;}
+.zi-orb.c{width:180px;height:180px;left:12%;bottom:-60px;animation-delay:-5s;}
+@keyframes ziFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-22px) scale(1.06);}}
+.zi-ribbon{position:absolute;left:-30%;width:160%;height:13px;border-radius:99px;transform:rotate(-13deg) translateX(-112%);animation:ziSweep 1.5s cubic-bezier(.2,.8,.2,1) forwards;}
+.zi-ribbon.g{background:#0A9A3E;bottom:19%;animation-delay:.1s;}
+.zi-ribbon.y{background:#FFD200;bottom:calc(19% - 22px);animation-delay:.25s;}
+.zi-ribbon.r{background:#E5282B;bottom:calc(19% - 44px);animation-delay:.4s;}
+@keyframes ziSweep{to{transform:rotate(-13deg) translateX(0);}}
+.zi-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 24px;margin-top:-6vh;}
+.zi-card{width:min(64vw,250px);aspect-ratio:1.42;background:#fff;border-radius:28px;display:flex;align-items:center;justify-content:center;padding:14px;box-shadow:0 22px 60px rgba(0,0,0,.35);opacity:0;transform:scale(.5) translateY(26px);animation:ziPop .85s cubic-bezier(.2,1.3,.4,1) .05s forwards,ziPulse 2.4s ease-out 1s infinite;}
+.zi-card img{width:100%;height:100%;object-fit:contain;display:block;}
+@keyframes ziPop{to{opacity:1;transform:none;}}
+@keyframes ziPulse{0%{box-shadow:0 22px 60px rgba(0,0,0,.35),0 0 0 0 rgba(255,255,255,.45);}100%{box-shadow:0 22px 60px rgba(0,0,0,.35),0 0 0 30px rgba(255,255,255,0);}}
+.zi-title{margin-top:30px;font:800 clamp(30px,9.6vw,42px)/1.1 'Sora',sans-serif;letter-spacing:.3px;display:flex;justify-content:center;white-space:nowrap;text-shadow:0 3px 16px rgba(0,0,0,.25);}
+.zi-title span{display:inline-block;opacity:0;transform:translateY(26px) scale(.7);animation:ziLetter .5s cubic-bezier(.2,1.25,.4,1) forwards;}
+.zi-title .dash{color:#FFD200;}
+.zi-title .lk{color:#CFE1FF;font-weight:600;}
+@keyframes ziLetter{to{opacity:1;transform:none;}}
+.zi-sub{margin-top:13px;max-width:290px;font:500 clamp(12.5px,3.7vw,14.5px)/1.5 'Inter',sans-serif;color:#DCE8FF;opacity:0;transform:translateY(10px);animation:ziFade .8s ease 1.75s forwards;}
+@keyframes ziFade{to{opacity:1;transform:none;}}
+.zi-bar{position:absolute;left:50%;bottom:calc(44px + env(safe-area-inset-bottom,0px));width:120px;height:4px;margin-left:-60px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;z-index:2;}
+.zi-bar b{display:block;height:100%;width:0;background:#fff;border-radius:4px;animation:ziBar 2.3s cubic-bezier(.4,0,.2,1) .15s forwards;}
+@keyframes ziBar{to{width:100%;}}
+@media (prefers-reduced-motion:reduce){ .zi-orb,.zi-ribbon{animation:none;transform:rotate(-13deg);} .zi-card,.zi-title span,.zi-sub{animation-duration:.01s !important;animation-delay:0s !important;} }
+
+/* ===================== NOTIFICATION PROMPT ===================== */
+.nb{position:fixed;left:12px;right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:9600;max-width:456px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 10px 36px rgba(17,24,39,.25);padding:12px;display:flex;align-items:center;gap:10px;animation:ntUp .25s ease-out;}
+.nb-ic{width:38px;height:38px;border-radius:50%;background:var(--blue-pale);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.nb-tx{flex:1;min-width:0;display:flex;flex-direction:column;font-size:12px;color:var(--text-dim);line-height:1.35;}
+.nb-tx b{font-size:13.5px;color:var(--text);}
+.nb-yes{border:none;background:var(--blue);color:#fff;font-weight:700;font-size:13px;padding:9px 14px;border-radius:99px;}
+.nb-no{border:none;background:none;color:var(--text-faint);font-size:15px;padding:6px;}
 </style>
 </head>
 <body>
 <script>try{ if(localStorage.getItem('zpl_session')) document.documentElement.classList.add('zpl-boot'); }catch(e){}</script>
+
+<div id="zplIntro" aria-hidden="true">
+  <div class="zi-orb a"></div><div class="zi-orb b"></div><div class="zi-orb c"></div>
+  <div class="zi-ribbon g"></div><div class="zi-ribbon y"></div><div class="zi-ribbon r"></div>
+  <div class="zi-center">
+    <div class="zi-card"><img id="ziLogo" alt=""></div>
+    <div class="zi-title" id="ziTitle">ZimPro-Linkup</div>
+    <div class="zi-sub">Zimbabwe's trusted marketplace for jobs, services &amp; homes</div>
+  </div>
+  <div class="zi-bar"><b></b></div>
+</div>
+<script>(function(){
+  var el = document.getElementById('zplIntro'); if(!el) return;
+  try{ if(/[?&]from=push/.test(location.search)){ el.parentNode.removeChild(el); return; } }catch(e){}
+  var s = 'ZimPro-Linkup', h = '';
+  for(var i = 0; i < s.length; i++){
+    var cls = i === 6 ? 'dash' : (i > 6 ? 'lk' : '');
+    h += '<span class="' + cls + '" style="animation-delay:' + (0.85 + i * 0.065).toFixed(2) + 's">' + s.charAt(i) + '</span>';
+  }
+  document.getElementById('ziTitle').innerHTML = h;
+  var started = false;
+  function start(){
+    if(started) return; started = true;
+    el.classList.add('zi-go');
+    setTimeout(function(){ el.classList.add('zi-out'); }, 2700);
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 3400);
+  }
+  function setLogo(){
+    var l = document.getElementById('splashLogoImg'), im = document.getElementById('ziLogo');
+    if(l && im && l.getAttribute('src')){ im.onload = start; im.onerror = start; im.src = l.getAttribute('src'); if(im.complete) start(); }
+  }
+  document.addEventListener('DOMContentLoaded', setLogo);
+  setTimeout(start, 1200);
+})();</script>
+<script>
+/* status-bar colour: blue while booting / intro, deep blue on the welcome page, WHITE inside the app (matches the white top bar = clean, no blue strip) */
+(function(){
+  var meta = document.getElementById('zplThemeColor'), last = '';
+  function want(){
+    var root = document.documentElement;
+    if(document.getElementById('zplIntro')) return '#1877F2';
+    if(root.classList.contains('zpl-boot')) return '#1877F2';
+    var sp = document.getElementById('splashScreen');
+    if(sp && !sp.classList.contains('hidden')) return '#0B3D91';
+    return '#FFFFFF';
+  }
+  function sync(){ var c = want(); if(c !== last && meta){ last = c; meta.setAttribute('content', c); } }
+  window.zplSyncTheme = sync;
+  document.addEventListener('DOMContentLoaded', function(){
+    sync();
+    var mo = new MutationObserver(sync);
+    var sp = document.getElementById('splashScreen'); if(sp) mo.observe(sp, { attributes:true, attributeFilter:['class'] });
+    mo.observe(document.documentElement, { attributes:true, attributeFilter:['class'] });
+    mo.observe(document.body, { childList:true });
+  });
+  setInterval(sync, 700);
+})();
+</script>
 <div id="bootScreen"><div class="boot-in"><div class="boot-logo">ZimPro<span>-Linkup</span></div><div class="boot-spin"></div></div></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="zplMsgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1877F2"/><stop offset="1" stop-color="#8A3FE8"/></linearGradient></defs></svg>
 <div id="appFrame">
@@ -2299,7 +2413,12 @@ function handleLogout(){
   if(!confirm('Log out of ZimPro-Linkup?')) return;
   stopPresence();
   try{ localStorage.removeItem('zpl_session'); }catch(e){}
-  fb().signOut(fb().auth);
+  let dropTok = Promise.resolve();
+  try{
+    const tk = localStorage.getItem('zpl_fcm_token');
+    if(tk && currentUser){ dropTok = Promise.race([fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { fcmTokens: fb().arrayRemove(tk) }, { merge:true }), new Promise(r => setTimeout(r, 1500))]).catch(() => {}); localStorage.removeItem('zpl_fcm_token'); }
+  }catch(e){}
+  dropTok.then(() => fb().signOut(fb().auth));
 }
 
 function showApp(){
@@ -2328,6 +2447,7 @@ function showApp(){
   startSupportSync(); startBroadcastSync();
   startCallListener();
   askNotifPermissionOnce();
+  zplLaunchFromPush();
 }
 function showLanding(){
   document.getElementById('appShell').classList.add('hidden');
@@ -3888,7 +4008,7 @@ function startConversationsSync(){
         if(t && prev && t > prev && c.lastSenderId && c.lastSenderId !== currentUser.uid && c.id !== activeConvId){
           playReceivedSound();
         }
-        if(t && prev && t > prev && c.lastSenderId && c.lastSenderId !== currentUser.uid && document.hidden) notifyOS((c.names && c.names[c.lastSenderId]) || 'New message', c.lastMessage || 'New message', { tag:'msg_' + c.id, data:{ url:'./' } });
+        if(t && prev && t > prev && c.lastSenderId && c.lastSenderId !== currentUser.uid && document.hidden) notifyOS((c.names && c.names[c.lastSenderId]) || 'New message', c.lastMessage || 'New message', { tag:'msg_' + c.id, data:{ kind:'message', uid:c.lastSenderId, name:(c.names && c.names[c.lastSenderId]) || '', url:'./' } });
         if(t) convUpdateTimes[c.id] = t;
       });
     } else {
@@ -3983,6 +4103,7 @@ function chatBubbleInner(m){
 function viewImage(url){ document.getElementById('imgViewerImg').src = url; document.getElementById('imgViewerOverlay').classList.remove('hidden'); }
 function renderChatMessages(msgs){
   activeConvMessages = msgs;
+  if(window._zplSwiping){ window._zplPendingRender = true; return; }
   const wrap = document.getElementById('chatMessages');
   if(!wrap) return;
   if(!msgs.length){ wrap.innerHTML = `<div class="empty-state"><i class="fa-regular fa-comments"></i><p>Say hello 👋</p></div>`; typingPaint(); return; }
@@ -4166,30 +4287,66 @@ document.addEventListener('click', e => {
   const q = t.closest('#chatMessages .chat-quote'); if(q){ chatJump(q.dataset.go); return; }
   const rb = t.closest('#chatMessages .mrep'); if(rb) chatSetReply(rb.dataset.rep);
 });
-/* swipe a message to the right to reply (like WhatsApp / Messenger) */
+/* swipe a message to the right to reply — WhatsApp style: ONLY the swiped message moves, everything else stays put */
 (function swipeToReply(){
-  let sx = 0, sy = 0, col = null, dx = 0, on = false;
-  const box = () => document.getElementById('chatMessages');
+  const THRESH = 56, MAX = 78;
+  let col = null, row = null, ic = null, sx = 0, sy = 0, dx = 0, locked = false, armed = false, safety = 0;
+  const vib = ms => { if(navigator.vibrate) try{ navigator.vibrate(ms); }catch(err){} };
+  function mkIcon(){
+    ic = document.createElement('div'); ic.className = 'swipe-ic'; ic.innerHTML = '<i class="fa-solid fa-reply"></i>';
+    ic.style.left = (col.offsetLeft + 4) + 'px';
+    row.insertBefore(ic, row.firstChild);
+  }
   document.addEventListener('touchstart', e => {
-    const c = e.target.closest && e.target.closest('#chatMessages .chat-msg-col');
-    if(!c || (e.target.closest && e.target.closest('audio, .chat-react, .chat-quote'))) { col = null; return; }
-    col = c; const t = e.touches[0]; sx = t.clientX; sy = t.clientY; dx = 0; on = false;
+    col = null; locked = false; armed = false;
+    if(e.touches.length !== 1) return;
+    const t = e.target; if(!t || !t.closest) return;
+    const c = t.closest('#chatMessages .chat-msg-col');
+    if(!c || t.closest('audio, .chat-react, .mrep, a') || !c.querySelector('.mrep')) return;
+    col = c; row = c.parentElement; dx = 0;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
   }, { passive:true });
   document.addEventListener('touchmove', e => {
     if(!col) return;
     const t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
-    if(!on){ if(Math.abs(my) > 14 && Math.abs(my) > Math.abs(mx)){ col = null; return; } if(mx > 14 && mx > Math.abs(my) * 1.4) on = true; else return; }
-    dx = Math.max(0, Math.min(mx, 90));
-    col.style.transition = 'none'; col.style.transform = `translateX(${dx * 0.7}px)`;
-  }, { passive:true });
-  const end = () => {
-    if(!col) return;
-    const c = col; col = null;
-    c.style.transition = 'transform .2s ease'; c.style.transform = '';
-    if(on && dx > 58){ if(navigator.vibrate) try{ navigator.vibrate(12); }catch(err){} chatSetReply(c.dataset.mid); }
-    on = false; dx = 0;
-  };
-  document.addEventListener('touchend', end); document.addEventListener('touchcancel', end);
+    if(!locked){
+      if(Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)){ col = null; return; }   /* the user is scrolling */
+      if(mx < -10){ col = null; return; }                                           /* wrong direction */
+      if(mx > 12 && mx > Math.abs(my) * 1.3){
+        locked = true; window._zplSwiping = true; mkIcon();
+        col.style.transition = 'none'; col.style.willChange = 'transform';
+        clearTimeout(safety); safety = setTimeout(() => finish(false), 6000);
+      } else return;
+    }
+    if(e.cancelable) e.preventDefault();
+    let d = Math.max(0, mx);
+    if(d > THRESH) d = THRESH + (d - THRESH) * 0.25;
+    dx = Math.min(d, MAX);
+    col.style.transform = 'translate3d(' + dx + 'px,0,0)';
+    const p = Math.min(1, dx / THRESH);
+    ic.style.opacity = p; ic.style.transform = 'scale(' + (0.4 + 0.6 * p + (dx >= THRESH ? 0.12 : 0)) + ')';
+    const now = dx >= THRESH;
+    if(now !== armed){ armed = now; ic.classList.toggle('armed', armed); if(armed) vib(12); }
+  }, { passive:false });
+  function finish(reply){
+    clearTimeout(safety);
+    const c = col, icon = ic, wasLocked = locked;
+    col = null; ic = null; locked = false;
+    if(!wasLocked || !c) return;
+    c.style.transition = 'transform .22s cubic-bezier(.2,.8,.2,1)';
+    c.style.transform = 'translate3d(0,0,0)';
+    if(icon){ icon.style.transition = 'opacity .18s'; icon.style.opacity = 0; }
+    const mid = c.dataset.mid;
+    setTimeout(() => {
+      c.style.transition = ''; c.style.transform = ''; c.style.willChange = '';
+      if(icon && icon.parentNode) icon.parentNode.removeChild(icon);
+      window._zplSwiping = false;
+      if(window._zplPendingRender){ window._zplPendingRender = false; renderChatMessages(activeConvMessages); }
+    }, 230);
+    if(reply && mid) chatSetReply(mid);
+  }
+  document.addEventListener('touchend', () => finish(armed));
+  document.addEventListener('touchcancel', () => finish(false));
 })();
 
 /* ---- unread counters ---- */
@@ -5109,7 +5266,7 @@ function showIncoming(d){
   fb().setDoc(callDocRef(d.id), { delivered:true }, { merge:true }).catch(() => {});
   showCallUi('in', d.callerName, d.callerPhoto);
   setCallStatus(d.video ? 'Incoming video call…' : 'Incoming voice call…'); startRingtone();
-  if(document.hidden) notifyOS((d.callerName || 'Someone') + ' is calling…', (d.video ? 'Incoming ZimPro video call' : 'Incoming ZimPro voice call') + ' — tap to answer', { tag:'call_' + d.id, requireInteraction:true, vibrate:[300,150,300,150,300], data:{ url:'./?call=' + d.id }, actions:[{ action:'answer', title:'Answer' }] });
+  if(document.hidden) notifyOS((d.callerName || 'Someone') + ' is calling…', (d.video ? 'Incoming ZimPro video call' : 'Incoming ZimPro voice call') + ' — tap to answer', { tag:'call_' + d.id, requireInteraction:true, vibrate:[300,150,300,150,300], data:{ kind:'call', callId:d.id, url:'./' }, actions:[{ action:'answer', title:'Answer' }, { action:'decline', title:'Decline' }] });
   clearTimeout(callIncomingTimer);
   callIncomingTimer = setTimeout(() => { if(callIncomingDoc && callIncomingDoc.id === d.id) dismissIncoming(`Missed call from ${d.callerName || 'ZimPro user'}`); }, 50000);
 }
@@ -5184,10 +5341,10 @@ window.addEventListener('pagehide', () => { if(call) endCall('', true); });
 const FCM_VAPID_KEY = 'BKPALciNVArwUOwtSNCcC-7uSPs4FHqJNjXcqJH-9EhNMb37QVYbkKQzsPKUKRypEmszIOCy1kFf3556t-jtCig'; // Firebase console → Project settings → Cloud Messaging → Web Push certificates → Key pair
 /* Where the push server lives. On Netlify hosting leave it as is. On GitHub Pages put the full address of the
    push server here, e.g. 'https://zimpro-push.netlify.app/.netlify/functions/push' (see the push-server README). */
-const PUSH_ENDPOINT = window.ZPL_PUSH_ENDPOINT || '/.netlify/functions/push';
+const PUSH_ENDPOINT = window.ZPL_PUSH_ENDPOINT || 'PASTE_YOUR_WORKER_URL_HERE';   /* e.g. 'https://zimpro-push.YOURNAME.workers.dev' */
 async function pushRemote(payload){
   try{
-    if(PUSH_ENDPOINT.charAt(0) === '/' && /github\.io$/.test(location.hostname)) return;   /* GitHub Pages cannot run the push function */
+    if(!/^https?:\/\//.test(PUSH_ENDPOINT)) return;   /* push server address not set yet */
     const u = fb().auth.currentUser; if(!u) return;
     const t = await u.getIdToken();
     fetch(PUSH_ENDPOINT, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + t }, body:JSON.stringify(payload), keepalive:true }).catch(() => {});
@@ -5197,13 +5354,17 @@ let swReg = null;
 async function registerSW(){
   if(swReg) return swReg;
   if(!('serviceWorker' in navigator)) return null;
-  try{ swReg = await navigator.serviceWorker.register('firebase-messaging-sw.js'); }catch(e){ console.warn('service worker unavailable:', e.message); }
+  try{
+    swReg = await navigator.serviceWorker.register('firebase-messaging-sw.js', { updateViaCache:'none' });
+    navigator.serviceWorker.addEventListener('message', ev => { const d = ev.data || {}; if(d.type === 'zpl-open') handlePushOpen(d); });
+  } catch(e){ console.warn('service worker unavailable:', e.message); }
   return swReg;
 }
+window.addEventListener('load', () => { registerSW(); });
 async function notifyOS(title, body, opt){
   try{
     if(!('Notification' in window) || Notification.permission !== 'granted') return;
-    const o = Object.assign({ body, tag:'zpl', renotify:true }, opt || {});
+    const o = Object.assign({ body, tag:'zpl', renotify:true, icon:'icons/zpl-192.png', badge:'icons/zpl-192.png' }, opt || {});
     const reg = await registerSW();
     if(reg && reg.showNotification) await reg.showNotification(title, o);
     else { const n = new Notification(title, o); n.onclick = () => { window.focus(); n.close(); }; }
@@ -5212,30 +5373,71 @@ async function notifyOS(title, body, opt){
 function closeNotifs(prefix){
   try{ if(swReg) swReg.getNotifications().then(l => l.filter(n => (n.tag || '').startsWith(prefix)).forEach(n => n.close())); }catch(e){}
 }
+/* a notification was tapped (or a button on it) */
+function handlePushOpen(d){
+  try{
+    if(!currentUser){ sessionStorage.setItem('zpl_push_open', JSON.stringify(d)); return; }
+    if(d.kind === 'message' && d.uid){ openChat(d.uid, d.name || 'ZimPro user', d.photo || '', ''); }
+    else if(d.kind === 'call' && d.action === 'decline' && d.callId){ fb().setDoc(callDocRef(d.callId), { status:'declined' }, { merge:true }).catch(() => {}); }
+    /* an Answer tap needs nothing more: the call listener rings the incoming-call screen by itself */
+  } catch(e){}
+}
+function zplLaunchFromPush(){
+  try{
+    let d = null; const p = new URLSearchParams(location.search);
+    if(p.get('from') === 'push'){
+      d = { kind:p.get('open'), uid:p.get('uid'), name:p.get('name'), callId:p.get('callId'), action:p.get('act') };
+      history.replaceState(null, '', location.pathname);
+    } else {
+      const st = sessionStorage.getItem('zpl_push_open');
+      if(st){ d = JSON.parse(st); sessionStorage.removeItem('zpl_push_open'); }
+    }
+    if(d && d.kind) setTimeout(() => handlePushOpen(d), 800);
+  } catch(e){}
+}
 async function enablePush(){
   if(!currentUser || !('Notification' in window) || Notification.permission !== 'granted') return;
   const reg = await registerSW();
   if(!reg){ toast('Alerts need firebase-messaging-sw.js uploaded next to index.html.', true); return; }
   if(!FCM_VAPID_KEY) return;
   try{
+    await navigator.serviceWorker.ready;
     const [{ getApp }, { getMessaging, getToken }] = await Promise.all([
       import('https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/12.1.0/firebase-messaging.js')]);
     const token = await getToken(getMessaging(getApp()), { vapidKey:FCM_VAPID_KEY, serviceWorkerRegistration:reg });
-    if(token){ await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { fcmTokens: fb().arrayUnion(token) }, { merge:true }); if(!localStorage.getItem('zpl_push_ok')){ localStorage.setItem('zpl_push_ok','1'); toast('Call & message alerts are on for this device.'); } }
+    if(token){
+      try{ localStorage.setItem('zpl_fcm_token', token); localStorage.setItem('zpl_push_ts', String(Date.now())); }catch(e){}
+      await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { fcmTokens: fb().arrayUnion(token), fcmUpdatedAt: fb().serverTimestamp() }, { merge:true });
+      if(!localStorage.getItem('zpl_push_ok')){ localStorage.setItem('zpl_push_ok','1'); toast('Call & message alerts are on for this device.'); }
+    }
     else toast('Alerts could not be turned on (no token).', true);
   } catch(e){ console.warn('push setup failed', e); toast('Alerts setup failed: ' + (e.code || e.message), true); }
 }
-function askNotifPermissionOnce(){
-  if(!('Notification' in window)) return;
-  registerSW();
-  if(Notification.permission === 'granted'){ enablePush(); return; }
-  if(Notification.permission !== 'default') return;
-  document.addEventListener('click', function h(){
-    document.removeEventListener('click', h);
-    Notification.requestPermission().then(p => { if(p === 'granted') enablePush(); else toast('Notifications are blocked — allow them in your browser/site settings to get call alerts.', true); });
-  }, { once:true });
+function zplShowNotifBanner(){
+  if(document.getElementById('notifBanner') || !currentUser) return;
+  if(!('Notification' in window) || Notification.permission !== 'default') return;
+  try{ if(Date.now() - (+localStorage.getItem('zpl_nb_dismiss') || 0) < 3 * 864e5) return; }catch(e){}
+  const el = document.createElement('div'); el.id = 'notifBanner'; el.className = 'nb';
+  el.innerHTML = '<div class="nb-ic"><i class="fa-solid fa-bell"></i></div><div class="nb-tx"><b>Turn on notifications</b><span>Get messages and call alerts even when ZimPro is closed.</span></div><button class="nb-yes" type="button">Turn on</button><button class="nb-no" type="button" aria-label="Dismiss">&#10005;</button>';
+  el.querySelector('.nb-yes').onclick = () => {
+    el.remove();
+    Notification.requestPermission().then(p => { if(p === 'granted') enablePush(); else toast('Notifications are blocked — allow them in your browser / site settings to get call alerts.', true); });
+  };
+  el.querySelector('.nb-no').onclick = () => { try{ localStorage.setItem('zpl_nb_dismiss', String(Date.now())); }catch(e){} el.remove(); };
+  document.body.appendChild(el);
 }
+function askNotifPermissionOnce(){
+  registerSW();
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'granted'){ enablePush(); return; }
+  if(Notification.permission === 'default') setTimeout(zplShowNotifBanner, 2500);
+}
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden || !currentUser || !('Notification' in window) || Notification.permission !== 'granted') return;
+  let ts = 0; try{ ts = +localStorage.getItem('zpl_push_ts') || 0; }catch(e){}
+  if(Date.now() - ts > 6 * 36e5) enablePush();
+});
 async function sendChatMessage(e){
   e.preventDefault();
   const input = document.getElementById('chatInput');
