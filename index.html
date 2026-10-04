@@ -22,12 +22,82 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ZimPro">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" data-async onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css" media="print" data-async onload="this.media='all'"><noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" media="print" data-async onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 
 <!-- Firebase — SAME project as the ZimPro-Linkup website, so accounts, listings and chats are shared -->
-<script type="module">
+<script>
+/* ZimPro connection guard + self-diagnosis.
+   If the app cannot start (weak data, network blocking Google, very old browser, a crash) the person now gets a clear screen with the likely reason,
+   instead of a blank page or an endless spinner. */
+(function(){
+  var BUILD = '2026-10-04.13', done = false, firstErr = '';
+  window.ZPL_BUILD = BUILD;
+  window.addEventListener('error', function(e){ if(!firstErr && e && e.message){ firstErr = String(e.message).slice(0,140) + (e.lineno ? ' @' + e.lineno : ''); window._zplFirstErr = firstErr; } });
+  function probe(url, ms){
+    return new Promise(function(res){
+      var t = setTimeout(function(){ res(false); }, ms || 7000);
+      try{ fetch(url, { mode:'no-cors', cache:'no-store' }).then(function(){ clearTimeout(t); res(true); }, function(){ clearTimeout(t); res(false); }); }catch(e){ clearTimeout(t); res(false); }
+    });
+  }
+  function oldBrowser(){
+    try{ new Function('var a={b:1};return a?.b ?? 0'); }catch(e){ return true; }
+    try{ if(!('noModule' in HTMLScriptElement.prototype) || typeof Promise.allSettled !== 'function' || typeof globalThis === 'undefined') return true; }catch(e){ return true; }
+    return false;
+  }
+  function overlay(kind){
+    var d = document.getElementById('zplConnFail');
+    if(!d){
+      d = document.createElement('div'); d.id = 'zplConnFail';
+      d.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(160deg,#1877F2,#0B3D91);overflow:auto';
+      d.innerHTML = '<div style="max-width:330px"><div style="font-size:26px;font-weight:800;margin-bottom:6px">ZimPro<span style="opacity:.75">-Linkup</span></div><div id="zcT" style="font-size:17px;font-weight:700;margin:18px 0 8px"></div><div id="zcM" style="font-size:14px;line-height:1.55;opacity:.95"></div><button id="zplConnBtn" style="margin-top:22px;border:0;border-radius:14px;padding:13px 30px;font-size:15px;font-weight:700;color:#1877F2;background:#fff">Try again</button><div id="zcD" style="margin-top:20px;font-size:11px;line-height:1.5;opacity:.7;word-break:break-word"></div></div>';
+      (document.body || document.documentElement).appendChild(d);
+      document.getElementById('zplConnBtn').onclick = function(){ try{ sessionStorage.removeItem('zpl_conn_retry'); }catch(e){} location.reload(); };
+    }
+    var T = document.getElementById('zcT'), M = document.getElementById('zcM'), D = document.getElementById('zcD');
+    T.textContent = 'Can\u2019t connect right now';
+    M.textContent = 'Checking what went wrong\u2026';
+    var env = 'Build ' + BUILD + ' \u00b7 ' + kind + ' \u00b7 ' + (navigator.onLine === false ? 'offline' : 'online');
+    D.textContent = env;
+    var old = oldBrowser();
+    Promise.all([probe('https://www.gstatic.com/generate_204'), probe('https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/package.json')]).then(function(r){
+      var google = r[0], other = r[1], msg, ttl = 'Can\u2019t connect right now', code;
+      if(navigator.onLine === false || (!google && !other)){ code = 'NET'; msg = 'Your internet looks off or too weak. Check your mobile data or Wi-Fi, then tap Try again.'; }
+      else if(!google && other){ code = 'GOOGLE-BLOCKED'; msg = 'Your network is blocking Google services that ZimPro needs. This happens on some restricted data bundles, school or office Wi-Fi and some filters. Try a different Wi-Fi or mobile data, then tap Try again.'; }
+      else if(old){ code = 'OLD-BROWSER'; ttl = 'Your browser is out of date'; msg = 'Please open this link in the latest Chrome (or update your browser), then try again.'; }
+      else { code = 'APP'; ttl = 'Something went wrong'; msg = 'ZimPro could not start. Tap Try again. If it keeps happening, update your browser or open the link in Chrome.'; }
+      T.textContent = ttl; M.textContent = msg;
+      D.textContent = env + ' \u00b7 ' + code + ' \u00b7 google:' + (google ? 'ok' : 'no') + ' other:' + (other ? 'ok' : 'no') + (old ? ' \u00b7 old-browser' : '') + (window._zplInitErr ? ' \u00b7 ' + window._zplInitErr : '') + (firstErr ? ' \u00b7 ' + firstErr : '') + ' \u00b7 ' + (navigator.userAgent || '').slice(0, 90);
+    });
+  }
+  function show(kind){ if(document.body) overlay(kind); else document.addEventListener('DOMContentLoaded', function(){ overlay(kind); }); }
+  /* kind: 'load' = a download failed fast, 'init' = Firebase threw, 'timeout' = still waiting, 'app' = the page script crashed */
+  window.zplConnFail = function(kind, err){
+    if(window._zpl) return;
+    if(err){ window._zplInitErr = (err.message || String(err)).slice(0, 120); }
+    if(done) return; done = true; window.zplConnLate = true;
+    window._zplFirebaseFailed = true;
+    try{ window.dispatchEvent(new Event('zpl-firebase-ready')); }catch(e){}
+    try{ document.documentElement.classList.remove('zpl-boot'); }catch(e){}
+    if(kind === 'load' || kind === 'init'){
+      var again = false; try{ again = sessionStorage.getItem('zpl_conn_retry') === '1'; }catch(e){}
+      if(!again){ try{ sessionStorage.setItem('zpl_conn_retry', '1'); }catch(e){} setTimeout(function(){ location.reload(); }, 400); return; }
+    }
+    show(kind || 'load');
+  };
+  window.addEventListener('zpl-firebase-ready', function(){ if(window._zpl){ try{ sessionStorage.removeItem('zpl_conn_retry'); }catch(e){} } });
+  /* still waiting after 20s: tell the person why (and the page reloads itself if Firebase finally arrives) */
+  setTimeout(function(){ if(!window._zpl && !done) window.zplConnFail('timeout'); }, 20000);
+  /* the page script is inline, so once the page has loaded it has either started or crashed */
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(function(){ if(!window._zplBooted && !window._zplBootShown){ window._zplBootShown = true; try{ document.documentElement.classList.remove('zpl-boot'); }catch(e){} show('app'); } }, 400);
+  });
+  /* if a stylesheet never finished, show the page anyway */
+  setTimeout(function(){ try{ [].forEach.call(document.querySelectorAll('link[data-async]'), function(l){ l.media = 'all'; }); }catch(e){} }, 4000);
+})();
+</script>
+<script type="module" onerror="window.zplConnFail&&window.zplConnFail('load')">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
   import {
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
@@ -64,11 +134,11 @@
         where, arrayUnion, arrayRemove, increment
       };
       console.log('ZimPro-Linkup App — Firebase connected:', firebaseConfig.projectId);
+      if(window.zplConnLate){ location.reload(); return; }   /* connected after we gave up: reload cleanly */
       window.dispatchEvent(new Event('zpl-firebase-ready'));
     } catch (e) {
       console.error('Firebase init failed:', e);
-      window._zplFirebaseFailed = true;
-      window.dispatchEvent(new Event('zpl-firebase-ready'));
+      if(window.zplConnFail) window.zplConnFail('init', e); else { window._zplFirebaseFailed = true; window.dispatchEvent(new Event('zpl-firebase-ready')); }
     }
   })();
 </script>
@@ -7613,7 +7683,7 @@ function mkNearby(area){
     const d = (g && p.geo) ? haversineKm(g.lat, g.lng, p.geo.lat, p.geo.lng) : null;
     if(!mkArea && d != null){ if(d <= 30) out.push({...p, _d:d}); } else if(bizAreaMatch(p, area)) out.push({...p, _d:d});
   });
-  return out.sort((a,b) => (a._d ?? 1e9) - (b._d ?? 1e9));
+  return out.sort((a,b) => (a._d != null ? a._d : 1e9) - (b._d != null ? b._d : 1e9));
 }
 function renderMarket(){
   const inp = document.getElementById('mkSearch'); if(!inp) return;
@@ -7714,7 +7784,7 @@ function mkFillForm(){
   pdPhotos = []; mkBizChanged(); alertBox('pdAlert', '');
   const e = mkEditId && mkProducts.find(x => x.id === mkEditId);
   if(e){
-    sel.value = e.businessId; document.getElementById('pd-title').value = e.title || ''; document.getElementById('pd-price').value = e.price ?? '';
+    sel.value = e.businessId; document.getElementById('pd-title').value = e.title || ''; document.getElementById('pd-price').value = (e.price != null ? e.price : '');
     document.getElementById('pd-cur').value = e.currency || 'USD'; document.getElementById('pd-cat').value = e.category || 'other';
     document.getElementById('pd-cond').value = e.condition || 'New'; document.getElementById('pd-desc').value = e.description || '';
     document.getElementById('pd-loc').value = e.city || ''; pdPhotos = (e.photos||[]).map(u => ({ preview:u, url:u }));
@@ -7782,7 +7852,9 @@ function bizSwitch(which){
 /* ============================================================
    BOOTSTRAP
    ============================================================ */
+window._zplBooted = true;
 if(window._zpl){ initAuthListener(); startListingsSync(); startPropertiesSync(); startSchoolsSync(); startBusinessesSync(); startJobsSync(); startProductsSync(); }
+else if(window._zplFirebaseFailed){ /* connection screen is already showing */ }
 else window.addEventListener('zpl-firebase-ready', () => {
   if(window._zplFirebaseFailed){ toast('Could not connect to ZimPro-Linkup — check your connection and reload.', true); return; }
   initAuthListener(); startListingsSync(); startPropertiesSync(); startSchoolsSync(); startBusinessesSync(); startJobsSync(); startProductsSync();
