@@ -4845,6 +4845,8 @@ function updateChatBadge(){
   const el = document.getElementById('bnavChatBadge');
   if(el){ el.textContent = n > 99 ? '99+' : n; el.classList.toggle('hidden', !n); }
   document.title = n ? `(${n > 99 ? '99+' : n}) ${BASE_TITLE}` : BASE_TITLE;
+  /* number on the home-screen icon (installed app) */
+  try{ if(navigator.setAppBadge){ (n > 0 ? navigator.setAppBadge(n) : navigator.clearAppBadge()).catch(() => {}); } }catch(e){}
 }
 
 /* ---- call log in the chat ---- */
@@ -5818,12 +5820,12 @@ window.addEventListener('pagehide', () => { if(call) endCall('', true); });
 /* ============================================================
    BACKGROUND ALERTS — system notifications for calls & messages.
    Tab minimised/in background: works right away (needs firebase-messaging-sw.js beside index.html).
-   App fully closed: also needs FCM_VAPID_KEY below + the Cloud Functions in /functions.
+   App fully closed: also needs FCM_VAPID_KEY below + the free Cloudflare Worker (push-worker.js) — paste its URL into PUSH_ENDPOINT.
    ============================================================ */
 const FCM_VAPID_KEY = 'BKPALciNVArwUOwtSNCcC-7uSPs4FHqJNjXcqJH-9EhNMb37QVYbkKQzsPKUKRypEmszIOCy1kFf3556t-jtCig'; // Firebase console → Project settings → Cloud Messaging → Web Push certificates → Key pair
 /* Where the push server lives. On Netlify hosting leave it as is. On GitHub Pages put the full address of the
    push server here, e.g. 'https://zimpro-push.netlify.app/.netlify/functions/push' (see the push-server README). */
-const PUSH_ENDPOINT = window.ZPL_PUSH_ENDPOINT || 'PASTE_YOUR_WORKER_URL_HERE';   /* e.g. 'https://zimpro-push.YOURNAME.workers.dev' */
+const PUSH_ENDPOINT = window.ZPL_PUSH_ENDPOINT || 'https://zimpropush.softwareengineerarno.workers.dev';   /* e.g. 'https://zimpro-push.YOURNAME.workers.dev' */
 async function pushRemote(payload){
   try{
     if(!/^https?:\/\//.test(PUSH_ENDPOINT)) return;   /* push server address not set yet */
@@ -9909,19 +9911,36 @@ function cmMenu(cid){
 </script>
 
 <script>
-/* ===== Install ZimPro like a real app (Add to Home Screen) ===== */
+/* ===== Install ZimPro like a real app (Add to Home Screen) =====
+   v14: the Settings row and the install bar now show on EVERY phone that has not installed the app (before, they only showed
+   when the browser fired a special install event, so many phones never saw them). When the browser cannot install in one tap,
+   the person is taken to install.html, which shows the right steps for their phone. */
 (function(){
-  var deferred = null, KEY = 'zpl_install_dismissed';
+  var deferred = null, KEY = 'zpl_install_dismissed', FLAG = 'zpl_installed';
+  var ua = navigator.userAgent || '';
   var standalone = function(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true || !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()); };
-  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  var isIOS = /iphone|ipad|ipod/i.test(ua) && !window.MSStream;
+  var isMobile = isIOS || /Android|Mobi/i.test(ua);
+  function flag(){ try{ return localStorage.getItem(FLAG) === '1'; }catch(e){ return false; } }
+  function setFlag(v){ try{ if(v) localStorage.setItem(FLAG, '1'); else localStorage.removeItem(FLAG); }catch(e){} }
+  function installed(){ return standalone() || flag(); }
+  if(standalone()) setFlag(true);          /* opened from the home-screen icon: remember that it is installed */
   var row = function(){ return document.getElementById('installRow'); };
-  function refresh(){ var r = row(); if(r) r.style.display = (!standalone() && (deferred || isIOS)) ? '' : 'none'; if(standalone()){ var b = document.getElementById('installBar'); if(b) b.remove(); } }
-  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred = e; refresh(); setTimeout(maybeBar, 12000); });
-  window.addEventListener('appinstalled', function(){ deferred = null; refresh(); var b = document.getElementById('installBar'); if(b) b.remove(); try{ if(typeof toast === 'function') toast('ZimPro is installed on your phone.'); }catch(e){} });
+  function dropBar(){ var b = document.getElementById('installBar'); if(b) b.remove(); }
+  function refresh(){ var r = row(); if(r) r.style.display = (!installed() && (isMobile || deferred)) ? '' : 'none'; if(installed()) dropBar(); }
+  window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred = e; setFlag(false); refresh(); setTimeout(maybeBar, 12000); });
+  window.addEventListener('appinstalled', function(){ deferred = null; setFlag(true); refresh(); dropBar(); try{ if(typeof toast === 'function') toast('ZimPro is installed on your phone.'); }catch(e){} });
+  try{ if(navigator.getInstalledRelatedApps){ navigator.getInstalledRelatedApps().then(function(a){ if(a && a.length){ setFlag(true); refresh(); } }).catch(function(){}); } }catch(e){}
   window.installApp = async function(){
-    if(deferred){ deferred.prompt(); try{ await deferred.userChoice; }catch(e){} deferred = null; refresh(); return; }
+    if(deferred){
+      var d = deferred; deferred = null;
+      try{ d.prompt(); var c = await d.userChoice; if(c && c.outcome === 'accepted'){ setFlag(true); } else { deferred = d; } }catch(e){}
+      refresh(); return;
+    }
+    /* no one-tap install on this browser: open the guide page with the exact steps for this phone */
+    try{ var r = await fetch('install.html', { method:'HEAD', cache:'no-store' }); if(r && r.ok){ location.href = 'install.html?from=app'; return; } }catch(e){}
     if(isIOS){ iosHelp(); return; }
-    alert('To install: open your browser menu (⋮) and tap "Install app" or "Add to Home screen".');
+    alert('To install: open your browser menu (\u22EE) and tap "Install app" or "Add to Home screen".');
   };
   function iosHelp(){
     if(document.getElementById('iosHelp')) return;
@@ -9932,8 +9951,8 @@ function cmMenu(cid){
     document.body.appendChild(el);
   }
   function maybeBar(){
-    if(standalone() || document.getElementById('installBar')) return;
-    if(!(deferred || isIOS)) return;
+    if(installed() || document.getElementById('installBar')) return;
+    if(!(deferred || isMobile)) return;
     try{ var t = +localStorage.getItem(KEY) || 0; if(Date.now() - t < 7 * 864e5) return; }catch(e){}
     var bar = document.createElement('div'); bar.id = 'installBar';
     bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9400;max-width:440px;margin:0 auto;display:flex;align-items:center;gap:12px;background:#fff;border-radius:18px;box-shadow:0 12px 36px rgba(0,0,0,.28);padding:12px 12px 12px 14px;font:600 13px Inter,sans-serif;color:#374151';
@@ -9942,7 +9961,7 @@ function cmMenu(cid){
     bar.querySelector('[data-x]').onclick = function(){ try{ localStorage.setItem(KEY, String(Date.now())); }catch(e){} bar.remove(); };
     document.body.appendChild(bar);
   }
-  if(isIOS) setTimeout(function(){ refresh(); maybeBar(); }, 15000);
+  if(isMobile) setTimeout(function(){ refresh(); maybeBar(); }, 15000);
   document.addEventListener('DOMContentLoaded', refresh); setTimeout(refresh, 2500);
 })();
 </script>

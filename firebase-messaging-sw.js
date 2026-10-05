@@ -40,6 +40,12 @@ messaging.onBackgroundMessage((payload) => {
     ];
   }
 
+  // Number on the app icon (installed app): Android / Windows / macOS / iOS home-screen app
+  const n = parseInt(d.badge, 10);
+  if (!isNaN(n) && self.navigator && "setAppBadge" in self.navigator) {
+    (n > 0 ? self.navigator.setAppBadge(n) : self.navigator.clearAppBadge()).catch(() => {});
+  }
+
   return self.registration.showNotification(title, options);
 });
 
