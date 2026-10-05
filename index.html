@@ -814,7 +814,7 @@ select{font-size:16px;}
 /* real profile */
 #userProfileScreen{padding-bottom:calc(96px + env(safe-area-inset-bottom));background:var(--bg);}
 .up-cover{position:relative;height:176px;background:linear-gradient(135deg,#0B3D91 0%,#1877F2 100%);overflow:hidden;}
-.up-cover::after{content:'';position:absolute;inset:0;opacity:.12;background:repeating-linear-gradient(135deg,#fff 0 2px,transparent 2px 14px);}
+.up-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,transparent 40%,rgba(0,0,0,.25) 100%);}
 .up-cover .backbtn,.up-cover .up-share{position:absolute;z-index:2;top:calc(12px + env(safe-area-inset-top));width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.38);color:#fff;border:none;font-size:16px;display:flex;align-items:center;justify-content:center;}
 .up-cover .backbtn{left:12px;} .up-cover .up-share{right:12px;}
 .up-head{background:var(--surface);padding:0 16px 14px;border-bottom:1px solid var(--border-soft);}
@@ -1436,6 +1436,28 @@ html,body{min-height:100vh;min-height:100dvh;}
 #appFrame{min-height:100vh;min-height:100dvh;}
 html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
 
+
+.pj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.pj-it{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--surface-2);}
+.pj-it img,.pj-it video{width:100%;height:100%;object-fit:cover;}
+.pj-it button{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:16px;line-height:1;cursor:pointer;}
+.pj-it .pj-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:20px;text-shadow:0 1px 6px rgba(0,0,0,.6);}
+.pj-strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:12px;-webkit-overflow-scrolling:touch;}
+.pj-strip img,.pj-strip video{flex:0 0 100%;max-height:380px;object-fit:cover;scroll-snap-align:center;border-radius:12px;background:#000;}
+/* ===== v2: end-call button, chat menu, cover photo, human marker ===== */
+#callOverlay > button.call-endfab{display:none;position:absolute;left:50%;bottom:calc(26px + var(--safe-b,0px));transform:translateX(-50%);width:68px;height:68px;border-radius:50%;border:0;background:#E5334B;color:#fff;font-size:24px;align-items:center;justify-content:center;z-index:7;box-shadow:0 8px 24px rgba(229,51,75,.55);}
+#callOverlay.vid > button.call-endfab,#callOverlay.vidlive > button.call-endfab{display:flex;}
+.chat-menu-wrap{position:relative;}
+.chat-menu{display:none;position:absolute;right:0;top:44px;min-width:190px;background:#fff;border:1px solid var(--border-soft);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);overflow:hidden;z-index:60;}
+.chat-menu.open{display:block;}
+.chat-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;border:0;background:none;font:600 14px 'Inter',sans-serif;color:var(--text);text-align:left;cursor:pointer;}
+.chat-menu button:hover{background:var(--blue-pale);}
+.chat-menu button.danger{color:#E5334B;}
+html[data-theme=dark] .chat-menu{background:var(--surface);}
+.my-cover{align-self:stretch;margin:-20px -16px 4px;height:140px;background:linear-gradient(135deg,#1877F2,#0B3D91) center/cover no-repeat;position:relative;}
+.my-cover .cv-btn{position:absolute;right:12px;bottom:12px;border:0;border-radius:99px;padding:8px 14px;background:rgba(0,0,0,.5);color:#fff;font:600 12px 'Inter',sans-serif;display:flex;gap:6px;align-items:center;cursor:pointer;}
+.lm-me{background:none !important;border:0 !important;box-shadow:none !important;width:auto !important;height:auto !important;animation:none !important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));}
+.lm-me span{display:none !important;}
 </style>
 </head>
 <body>
@@ -2134,8 +2156,8 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
           </div>
           <div class="field">
             <label>Photo (optional)</label>
-            <input type="file" accept="image/*,video/*" id="pj-photo" style="display:none" onchange="handlePostPhotoPick(event)">
-            <button type="button" class="btn btn-ghost btn-block" onclick="document.getElementById('pj-photo').click()"><i class="fa-solid fa-camera"></i> Add a photo or video</button>
+            <input type="file" accept="image/*,video/*" id="pj-photo" multiple style="display:none" onchange="handlePostPhotoPick(event)">
+            <button type="button" class="btn btn-ghost btn-block" onclick="document.getElementById('pj-photo').click()"><i class="fa-solid fa-camera"></i> Add photos or videos (up to 5)</button>
             <div id="pjPhotoPreview" style="margin-top:8px;"></div>
           </div>
         </div>
@@ -2160,6 +2182,7 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
   <!-- ---------- MY PROFILE ---------- -->
   <div class="scroll-area screen-view hidden" id="myProfileScreen">
     <div class="profile-head">
+      <div class="my-cover" id="myCover"><button type="button" class="cv-btn" onclick="document.getElementById('myCoverInput').click()"><i class="fa-solid fa-camera"></i> Cover photo</button><input type="file" id="myCoverInput" accept="image/*" style="display:none" onchange="handleMyCoverPick(event)"></div>
       <div class="avatar" id="myAvatarWrap">
         <span id="myAvatarInit">?</span>
         <button class="edit-badge" onclick="document.getElementById('myPhotoInput').click()"><i class="fa-solid fa-camera"></i></button>
@@ -2392,6 +2415,14 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
     </div>
     <button class="icon-btn-round" id="chatVideoBtn" onclick="startVoiceCall(true)" title="Video call" aria-label="Video call" style="background:var(--blue-pale);color:var(--blue);"><i class="fa-solid fa-video"></i></button>
     <button class="icon-btn-round" id="chatCallBtn" onclick="callActiveChat()" title="Voice call" aria-label="Voice call"><i class="fa-solid fa-phone"></i></button>
+    <div class="chat-menu-wrap">
+      <button class="icon-btn-round" onclick="chatMenuToggle(event)" aria-label="More options"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+      <div class="chat-menu" id="chatMenu">
+        <button onclick="chatDeleteConv()"><i class="fa-regular fa-trash-can"></i> Delete chat</button>
+        <button onclick="chatBlockUser()"><i class="fa-solid fa-ban"></i> Block user</button>
+        <button class="danger" onclick="chatReportUser()"><i class="fa-regular fa-flag"></i> Report user</button>
+      </div>
+    </div>
   </div>
   <div class="chat-body" id="chatMessages"></div>
   <div class="chat-rec-bar hidden" id="chatRecBar">
@@ -2420,6 +2451,7 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
 
 <!-- Voice call -->
 <div id="callOverlay" class="hidden">
+  <button type="button" class="call-endfab" onclick="endCall('Call ended.', true)" aria-label="End call"><i class="fa-solid fa-phone-slash"></i></button>
   <video id="callRemoteVideo" autoplay playsinline></video><video id="callLocalVideo" autoplay playsinline muted></video>
   <div class="call-brand"><i class="fa-solid fa-phone-volume"></i> ZimPro voice call</div>
   <div class="call-mid">
@@ -3158,7 +3190,7 @@ const TRENDING_COUNT = 4;
 // A post only ever qualifies for Trending if it was shared with a photo
 // or video. Text-only posts always flow into Recent Posts instead —
 // however new they are — never into Trending.
-function hasMedia(l){ return !!(l && (l.photo || l.videoUrl)); }
+function hasMedia(l){ return !!(l && (l.photo || l.videoUrl || (l.media && l.media.length))); }
 /* ---------- live, typo-tolerant search helpers ---------- */
 function normalizeSearchStr(s){ return (s||'').toString().toLowerCase().trim().replace(/[^a-z0-9\s]/g,''); }
 function levenshteinDist(a, b){
@@ -3349,7 +3381,7 @@ function postCardHtml(l){
   const shareCount = l.shareCount || 0;
   const avatar = l.ownerPhoto ? `<img src="${l.ownerPhoto}">` : `<i class="fa-solid fa-user"></i>`;
   const textOnly = !hasMedia(l);
-  const media = l.videoUrl
+  const media = (l.media && l.media.length > 1) ? zplMediaStrip(l.media) : l.videoUrl
     ? `<video class="pmedia" src="${l.videoUrl}" controls playsinline onclick="event.stopPropagation()"></video>`
     : (l.photo ? `<img class="pmedia" src="${l.photo}" loading="lazy" decoding="async" alt="" onclick="event.stopPropagation();viewImage('${l.photo}')">` : '');
   return `<div class="post-card${textOnly?' text-only':''}" onclick="openPostDetail('${l.id}')">
@@ -3831,29 +3863,41 @@ async function buildPhotoUrls(items){
 }
 let pjVideoFile = null;
 let pjPhotoFile = null;
+let pjMedia = [], pjOld = [];
+function zplMediaStrip(arr){
+  return '<div class="pj-strip" onclick="event.stopPropagation()">' + arr.map(m => m.type === 'video'
+    ? `<video src="${escapeHtml(m.url)}" controls playsinline preload="metadata"></video>`
+    : `<img src="${escapeHtml(m.url)}" loading="lazy" alt="" onclick="viewImage('${escapeHtml(m.url)}')">`).join('') + '</div>';
+}
+function pjMediaRender(){
+  const box = document.getElementById('pjPhotoPreview'); if(!box) return;
+  const all = [...pjOld.map((m, i) => ({ t:m.type, src:m.url, old:1, i })), ...pjMedia.map((m, i) => ({ t:m.type, src:m.preview, old:0, i }))];
+  box.innerHTML = all.length ? '<div class="pj-grid">' + all.map(x => `<div class="pj-it">${x.t === 'video' ? `<video src="${x.src}" muted playsinline></video><i class="fa-solid fa-play pj-play"></i>` : `<img src="${x.src}" alt="">`}<button type="button" onclick="pjMediaRemove(${x.old},${x.i})" aria-label="Remove">&times;</button></div>`).join('') + `</div><div style="font-size:12px;color:var(--text-dim);margin-top:4px;">${all.length}/5 added</div>` : '';
+}
+function pjMediaRemove(old, i){ (old ? pjOld : pjMedia).splice(i, 1); pjMediaRender(); }
+function zplLoadEditMedia(l){
+  pjMedia = [];
+  pjOld = (l.media && l.media.length) ? l.media.slice(0, 5) : [...(l.photo ? [{ type:'image', url:l.photo }] : []), ...(l.videoUrl ? [{ type:'video', url:l.videoUrl }] : [])];
+  pjMediaRender();
+}
 async function handlePostPhotoPick(e){
-  const file = e.target.files && e.target.files[0];
-  if(!file) return;
-  pjVideoFile = null;
-  if(file.type.startsWith('video/')){
-    if(!cloudReady()){
-      toast(VIDEO_NEEDS_HOST_MSG, true);
-      e.target.value = ''; pjPhotoData = ''; pjPhotoFile = null;
-      return;
-    }
-    try{
-      const dur = await getVideoDuration(file);
-      if(dur > 61){ toast('Please pick a video that is 60 seconds or shorter.', true); e.target.value = ''; return; }
-    } catch(err){ toast(err.message || 'Could not use that video.', true); e.target.value = ''; return; }
-    pjVideoFile = file; pjPhotoFile = null; pjPhotoData = '';
-    document.getElementById('pjPhotoPreview').innerHTML = `<video src="${URL.createObjectURL(file)}" controls playsinline style="width:100%;max-height:260px;border-radius:10px;"></video>`;
-    return;
+  const files = [...(e.target.files || [])]; e.target.value = '';
+  for(const f of files){
+    if(pjOld.length + pjMedia.length >= 5){ toast('You can add up to 5 photos or videos.', true); break; }
+    if(f.type.startsWith('video/')){
+      if(!cloudReady()){ toast(VIDEO_NEEDS_HOST_MSG, true); continue; }
+      try{ const d = await getVideoDuration(f); if(d > 61){ toast('Each video must be 60 seconds or shorter.', true); continue; } }
+      catch(err){ toast(err.message || 'Could not use that video.', true); continue; }
+      pjMedia.push({ file:f, type:'video', preview:URL.createObjectURL(f) });
+    } else pjMedia.push({ file:f, type:'image', preview:URL.createObjectURL(f) });
   }
-  try{
-    document.getElementById('pjPhotoPreview').innerHTML = `<div class="empty-state" style="padding:14px;"><div class="spinner dark"></div></div>`;
-    pjPhotoFile = file;
-    document.getElementById('pjPhotoPreview').innerHTML = `<img src="${URL.createObjectURL(file)}" style="width:100%;max-height:360px;object-fit:contain;background:var(--surface-2);border-radius:10px;">`;
-  } catch(err){ console.error('photo upload failed', err); toast(err.message || 'Could not use that photo.', true); document.getElementById('pjPhotoPreview').innerHTML=''; }
+  pjMediaRender();
+}
+async function pjUploadAll(){
+  const out = [...pjOld];
+  const budget = Math.floor(photoBudgetTotal() / Math.max(1, pjMedia.filter(m => m.type === 'image').length));
+  for(const m of pjMedia){ out.push({ type:m.type, url: m.type === 'video' ? await cloudUploadVideo(m.file) : await prepareImage(m.file, budget) }); }
+  return out;
 }
 let editingListingId = null;
 function startEditListing(id){
@@ -3872,7 +3916,7 @@ function startEditListing(id){
     document.getElementById('pj-details').value = l.description || '';
     document.getElementById('pjCharCount').textContent = (l.description||'').length;
     pjPhotoData = l.photo || ''; pjPhotoFile = null;
-    if(l.photo) document.getElementById('pjPhotoPreview').innerHTML = `<img src="${l.photo}" style="width:100%;max-height:220px;object-fit:cover;border-radius:10px;">`;
+    zplLoadEditMedia(l);
     document.getElementById('pjSubmitBtn').textContent = 'Save Changes';
   }, 0);
 }
@@ -3892,23 +3936,22 @@ async function handlePostJob(e){
   const btn = document.getElementById('pjSubmitBtn');
   btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>';
   try{
-    let videoUrl = editingListingId ? (listings.find(x=>x.id===editingListingId)||{}).videoUrl || '' : '';
-    if(pjVideoFile){ videoUrl = await cloudUploadVideo(pjVideoFile); }
-    let photoUrl = pjPhotoData || '';
-    if(pjPhotoFile){ photoUrl = await prepareImage(pjPhotoFile, photoBudgetTotal()); }
+    const mediaArr = await pjUploadAll();
+    const videoUrl = (mediaArr.find(m => m.type === 'video') || {}).url || '';
+    const photoUrl = (mediaArr.find(m => m.type === 'image') || {}).url || '';
     const geo = currentUser.geo || null;
     const docId = editingListingId || (crypto.randomUUID ? crypto.randomUUID() : 'L' + Date.now());
     const data = {
       ownerId: currentUser.uid, ownerName: currentUser.name, ownerPhoto: currentUser.photo||'',
       postType: pjPostType, title, category, city, rate, description, phone, whatsapp,
-      photo: photoUrl, videoUrl, geo, hideEngagement: !!currentUser.hideEngagement, updatedAt: fb().serverTimestamp()
+      photo: photoUrl, videoUrl, media: mediaArr, geo, hideEngagement: !!currentUser.hideEngagement, updatedAt: fb().serverTimestamp()
     };
     if(!editingListingId){ data.createdAt = fb().serverTimestamp(); data.likedBy = []; data.commentCount = 0; data.shareCount = 0; }
     await fb().setDoc(fb().doc(fb().db, 'listings', docId), data, { merge: !!editingListingId });
     toast(editingListingId ? 'Listing updated.' : (pjPostType==='job' ? 'Job posted! Nearby professionals can now see it.' : 'Your service is now listed!'));
     document.getElementById('pj-title').value=''; document.getElementById('pj-budget').value='';
     document.getElementById('pj-details').value=''; document.getElementById('pjCharCount').textContent='0';
-    document.getElementById('pjPhotoPreview').innerHTML=''; pjPhotoData=''; pjPhotoFile=null; pjVideoFile=null;
+    document.getElementById('pjPhotoPreview').innerHTML=''; pjPhotoData=''; pjPhotoFile=null; pjVideoFile=null; pjMedia=[]; pjOld=[];
     document.getElementById('pjSubmitBtn').textContent = 'Post Job';
     editingListingId = null;
     showScreen('mylistings');
@@ -4360,6 +4403,7 @@ async function openBasicProfile(uid, name, photo){
   document.getElementById('profCardBody').innerHTML = `<h2>${escapeHtml(name || 'ZimPro user')}</h2><div class="role">ZimPro member</div><div class="empty-state" style="padding:20px;font-size:12px;">Loading…</div>`;
   showScreen('profileView');
   const o = await fetchOwnerProfile(uid);
+  if(o && o.cover) bg.style.backgroundImage = `url('${o.cover}')`;
   await refreshRatingsForOwners([uid]);
   if(currentScreen !== 'profileView') return;
   const nm = o.name || name || 'ZimPro user', ph = o.photo || photo || '';
@@ -4480,7 +4524,7 @@ function startConversationsSync(){
   if(!fb() || !currentUser || convUnsub) return;
   const q = fb().query(fb().collection(fb().db,'conversations'), fb().where('participants','array-contains',currentUser.uid));
   convUnsub = fb().onSnapshot(q, snap => {
-    conversations = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+    conversations = snap.docs.map(d => ({ id:d.id, ...d.data() })).filter(zplConvVisible)
       .sort((a,b) => ((b.updatedAt&&b.updatedAt.seconds)||0) - ((a.updatedAt&&a.updatedAt.seconds)||0));
     conversations.forEach(typingObserve);
     if(!convSyncFirstLoad){
@@ -5242,7 +5286,7 @@ function paintUserProfile(){
   const place = o.area || (A.listings[0] && A.listings[0].city) || (A.properties[0] && A.properties[0].city) || '';
   const tab = t => `<button type="button" class="up-tab ${upState.tab === t ? 'on' : ''}" onclick="upTab('${t}')">${t === 'posts' ? 'Posts' : t === 'photos' ? 'Photos' : 'About'}</button>`;
   el.innerHTML = `
-    <div class="up-cover">
+    <div class="up-cover"${o.cover ? ` style="background:url('${escapeHtml(o.cover)}') center/cover no-repeat"` : ''}>
       <button class="backbtn" onclick="goBackScreen()" aria-label="Back"><i class="fa-solid fa-arrow-left"></i></button>
       <button class="up-share" onclick="shareUserProfile()" aria-label="Share"><i class="fa-solid fa-share-nodes"></i></button>
     </div>
@@ -5369,7 +5413,7 @@ function renderPostDetailCard(){
   const liked = currentUser && (l.likedBy || []).includes(currentUser.uid);
   const hide = !!l.hideEngagement && !mine;
   const lc = (l.likedBy || []).length, cc = l.commentCount || 0, sc = l.shareCount || 0;
-  const media = l.videoUrl ? `<video class="pd-media" src="${escapeHtml(l.videoUrl)}" controls playsinline></video>`
+  const media = (l.media && l.media.length > 1) ? zplMediaStrip(l.media) : l.videoUrl ? `<video class="pd-media" src="${escapeHtml(l.videoUrl)}" controls playsinline></video>`
     : (l.photo ? `<img class="pd-media" src="${escapeHtml(l.photo)}" alt="" onclick="viewImage('${escapeHtml(l.photo)}')">` : '');
   const facts = [l.rate ? `<i class="fa-solid fa-tag"></i> ${escapeHtml(l.rate)}` : '', l.experience ? `<i class="fa-solid fa-briefcase"></i> ${escapeHtml(String(l.experience))} yrs exp` : '', l.city ? `<i class="fa-solid fa-location-dot"></i> ${escapeHtml(l.city)}` : '']
     .filter(Boolean).map(f => `<span class="pd-fact">${f}</span>`).join('');
@@ -5922,6 +5966,68 @@ document.addEventListener('visibilitychange', () => {
   let ts = 0; try{ ts = +localStorage.getItem('zpl_push_ts') || 0; }catch(e){}
   if(Date.now() - ts > 6 * 36e5) enablePush();
 });
+/* ===== v2: chat menu (delete / block / report), blocking, cover photo ===== */
+function zplConvVisible(c){
+  const me = currentUser && currentUser.uid; if(!me) return true;
+  if(c.hidden && c.hidden[me]) return false;
+  const bl = currentUser.blockedUids || {};
+  return !(c.participants || []).some(u => u !== me && bl[u]);
+}
+const _blkCache = {};
+async function zplBlockedCheck(){
+  const other = activeConvOtherUid; if(!other || !currentUser) return false;
+  if((currentUser.blockedUids || {})[other]){ toast('You blocked this user. Unblock them to send messages.', true); return true; }
+  const hit = _blkCache[other];
+  if(hit && Date.now() - hit.t < 60000){ if(hit.v) toast('You cannot message this user.', true); return hit.v; }
+  let v = false;
+  try{ const d = await fb().getDoc(fb().doc(fb().db, 'users', other)); const b = d.exists() && d.data().blockedUids; v = !!(b && b[currentUser.uid]); }catch(e){}
+  _blkCache[other] = { v, t: Date.now() };
+  if(v) toast('You cannot message this user.', true);
+  return v;
+}
+function chatMenuToggle(ev){ if(ev) ev.stopPropagation(); const m = document.getElementById('chatMenu'); if(m) m.classList.toggle('open'); }
+document.addEventListener('click', () => { const m = document.getElementById('chatMenu'); if(m) m.classList.remove('open'); });
+async function chatDeleteConv(){
+  if(!activeConvId || !confirm('Delete this chat from your list? The other person keeps their copy.')) return;
+  try{ await fb().setDoc(fb().doc(fb().db, 'conversations', activeConvId), { hidden: { [currentUser.uid]: true } }, { merge:true }); toast('Chat deleted.'); closeChat(); }
+  catch(e){ toast('Could not delete chat.', true); }
+}
+async function chatBlockUser(){
+  const other = activeConvOtherUid; if(!other) return;
+  if(!confirm('Block this user? You will stop receiving their messages and calls, and they cannot message you.')) return;
+  try{
+    await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { blockedUids: { [other]: true } }, { merge:true });
+    currentUser.blockedUids = { ...(currentUser.blockedUids || {}), [other]: true };
+    toast('User blocked.'); closeChat();
+  } catch(e){ toast('Could not block user.', true); }
+}
+async function chatReportUser(){
+  const other = activeConvOtherUid; if(!other) return;
+  const reason = prompt('Report this user. What is the problem?\n(spam, scam, harassment, fake profile, other)');
+  if(!reason || !reason.trim()) return;
+  try{
+    await fb().setDoc(fb().doc(fb().db, 'reports', Date.now() + '_' + currentUser.uid), { reporterId: currentUser.uid, reportedId: other, convId: activeConvId || '', reason: reason.trim().slice(0, 300), createdAt: fb().serverTimestamp() });
+    toast('Report sent. Thank you.');
+  } catch(e){ toast('Could not send report.', true); }
+}
+async function handleMyCoverPick(e){
+  const f = e.target.files && e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{
+    toast('Uploading cover…');
+    const r = await cloudUploadImage(f, 1600); const url = typeof r === 'string' ? r : (r && (r.url || r.src));
+    if(!url) throw new Error('no url');
+    await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { cover: url }, { merge:true });
+    currentUser.cover = url; zplPaintMyCover(true); toast('Cover photo updated.');
+  } catch(err){ console.error(err); toast('Could not upload cover photo.', true); }
+}
+let _coverShown = '', _coverFetched = false;
+function zplPaintMyCover(force){
+  const el = document.getElementById('myCover'); if(!el || !currentUser) return;
+  if(!_coverFetched && !currentUser.cover && fb()){ _coverFetched = true; fb().getDoc(fb().doc(fb().db, 'users', currentUser.uid)).then(d => { const x = d.exists() && d.data(); if(x && x.cover){ currentUser.cover = x.cover; zplPaintMyCover(true); } if(x && x.blockedUids) currentUser.blockedUids = x.blockedUids; }).catch(() => {}); }
+  if(currentUser.cover && (force || _coverShown !== currentUser.cover)){ el.style.backgroundImage = `url('${currentUser.cover}')`; _coverShown = currentUser.cover; }
+}
+setInterval(zplPaintMyCover, 2000);
+
 async function sendChatMessage(e){
   e.preventDefault();
   const input = document.getElementById('chatInput');
@@ -5942,13 +6048,14 @@ async function sendChatMessage(e){
 }
 async function sendChatPayload(msgData, previewText){
   if(!activeConvId) return;
+  if(await zplBlockedCheck()) return;
   try{
     const mid = crypto.randomUUID ? crypto.randomUUID() : 'M'+Date.now();
     const data = { senderId: currentUser.uid, createdAt: fb().serverTimestamp(), ...msgData };
     if(chatReplyTo){ data.replyTo = { id:chatReplyTo.id, senderId:chatReplyTo.senderId, text:chatReplyTo.text, type:chatReplyTo.type }; chatReplyTo = null; renderReplyBar(); }
     await fb().setDoc(fb().doc(fb().db,'conversations',activeConvId,'messages',mid), data);
     const patch = { lastMessage: previewText, lastKind: msgData.type || 'text', lastSenderId: currentUser.uid, updatedAt: fb().serverTimestamp() };
-    if(activeConvOtherUid) patch.unread = { [activeConvOtherUid]: fb().increment(1) };
+    if(activeConvOtherUid){ patch.unread = { [activeConvOtherUid]: fb().increment(1) }; patch.hidden = { [activeConvOtherUid]: false, [currentUser.uid]: false }; }
     await fb().setDoc(fb().doc(fb().db,'conversations',activeConvId), patch, { merge:true });
     playSentSound();
     if(activeConvOtherUid) pushRemote({ type:'message', toUid:activeConvOtherUid, convId:activeConvId });
@@ -9064,6 +9171,10 @@ function lmSatStyle(){
     },
     layers:[
       { id:'sat', type:'raster', source:'sat', paint:{ 'raster-saturation':0.12, 'raster-contrast':0.08 } },
+      { id:'rd-case', type:'line', source:'openmaptiles', 'source-layer':'transportation', minzoom:13, filter:['!', ['in', ['get', 'class'], ['literal', ['rail', 'transit', 'ferry', 'aerialway']]]],
+        layout:{ 'line-cap':'round', 'line-join':'round' }, paint:{ 'line-color':'rgba(8,16,32,.6)', 'line-width':['interpolate', ['exponential', 1.6], ['zoom'], 13, 1.6, 19, 17] } },
+      { id:'rd-line', type:'line', source:'openmaptiles', 'source-layer':'transportation', minzoom:13, filter:['!', ['in', ['get', 'class'], ['literal', ['rail', 'transit', 'ferry', 'aerialway']]]],
+        layout:{ 'line-cap':'round', 'line-join':'round' }, paint:{ 'line-color':['match', ['get', 'class'], ['motorway', 'trunk', 'primary'], '#ffd166', ['secondary', 'tertiary'], '#ffffff', '#dfe8f5'], 'line-width':['interpolate', ['exponential', 1.6], ['zoom'], 13, 0.8, 19, 10.5] } },
       { id:'lbl-road', type:'symbol', source:'openmaptiles', 'source-layer':'transportation_name', minzoom:12,
         layout:{ 'symbol-placement':'line', 'text-field':nm, 'text-font':F, 'text-size':['interpolate', ['linear'], ['zoom'], 12, 10, 18, 14], 'text-letter-spacing':0.04, 'symbol-spacing':260, 'text-max-angle':35 },
         paint:Object.assign({ 'text-color':'#ffffff' }, halo) },
@@ -9119,7 +9230,7 @@ function lmCityGeo(text){
 }
 async function lmResolveFallback(inst){
   /* 1) the person's own latest saved spot */
-  if(fb()){ try{ const sn = await fb().getDoc(fb().doc(fb().db, 'users', inst.uid)); if(sn.exists()){ const d = sn.data(); const g = lmNormGeo(d.geo) || lmNormGeo(d.location); if(g) return g; inst.userArea = d.area || d.city || ''; } }catch(e){} }
+  if(fb()){ try{ const sn = await fb().getDoc(fb().doc(fb().db, 'users', inst.uid)); if(sn.exists()){ const d = sn.data(); const g = lmNormGeo(d.geo) || lmNormGeo(d.location); const ageMs = d.geo && d.geo.ts ? Date.now() - d.geo.ts : Infinity; if(g && (!inst.mine || ageMs < 15 * 60000)) return g; inst.userArea = d.area || d.city || ''; } }catch(e){} }
   /* 2) the coordinates stored on the listing / business */
   const g2 = lmNormGeo(inst.opts.fallback); if(g2) return g2;
   /* 3) the town / suburb written on the listing */
@@ -9166,7 +9277,7 @@ function lmBuildPerson(T, seed){
   const pant = [0x24304a, 0x2b2f3a, 0x3b4256, 0x1f2937][(h >>> 6) % 4];
   const style = (h >>> 9) % 3;            /* 0 short hair, 1 afro, 2 cap */
   const longSleeve = ((h >>> 12) % 3) === 0;
-  const M = (c, r, m) => new T.MeshStandardMaterial({ color:c, roughness:r == null ? 0.8 : r, metalness:m || 0.02, side:T.DoubleSide });
+  const M = (c, r, m) => new T.MeshBasicMaterial({ color:0x0B3D91, side:T.DoubleSide });   /* solid one-colour silhouette */
   const mSkin = M(skin, 0.55), mShirt = M(shirt, 0.85), mPant = M(pant, 0.88), mShoe = M(0xf2f4f8, 0.5), mSole = M(0x2b2f3a, 0.9), mHair = M(0x120f0d, 0.95), mDark = M(0x0b0b0c, 0.35), mWhite = M(0xffffff, 0.4), mLip = M(0x5a2a22, 0.6);
   const g = new T.Group(), rig = new T.Group(); g.add(rig);
   const add = (geo, mat, x, y, z, parent) => { const m = new T.Mesh(geo, mat); m.position.set(x, y, z); (parent || rig).add(m); return m; };
@@ -9321,7 +9432,7 @@ function lmLayer(inst){
       const mc = maplibregl.MercatorCoordinate.fromLngLat([inst.pos.lng, inst.pos.lat], 0);
       const mpp = 156543.03392 * Math.cos(inst.pos.lat * Math.PI / 180) / Math.pow(2, map.getZoom());
       const K = Math.max(1, inst.px * mpp / 1.75);
-      const sc = mc.meterInMercatorCoordinateUnits() * K;
+      const sc = mc.meterInMercatorCoordinateUnits() * K * 0.6;
       const m = new T.Matrix4().fromArray(matrix);
       const l = new T.Matrix4().makeTranslation(mc.x, mc.y, mc.z).scale(new T.Vector3(sc, -sc, sc)).multiply(new T.Matrix4().makeRotationAxis(new T.Vector3(1, 0, 0), Math.PI / 2));
       st.camera.projectionMatrix = m.multiply(l);
@@ -9458,7 +9569,7 @@ function lmSwitchStyle(inst){
 
 function lmInit(inst){
   const el = inst.node.querySelector('[data-map]');
-  const map = inst.map = new maplibregl.Map({ container:el, style:lmSatStyle(), center:[31.0522, -17.8292], zoom:15.5, pitch:60, bearing:-20, maxPitch:80, maxZoom:21, attributionControl:false, antialias:true });
+  const map = inst.map = new maplibregl.Map({ container:el, style:lmSatStyle(), center:[31.0522, -17.8292], zoom:15.5, pitch:60, bearing:-20, maxPitch:80, maxZoom:21, attributionControl:false, antialias:true, fadeDuration:120, maxTileCacheSize:200, renderWorldCopies:false });
   map.addControl(new maplibregl.AttributionControl({ compact:true }), 'bottom-right');
   map.addControl(new maplibregl.NavigationControl({ showZoom:false, visualizePitch:true }), 'top-left');
   map.on('style.load', () => lmAddStuff(inst));
@@ -9503,7 +9614,7 @@ function lmInit(inst){
     inst.fbBusy = false;
     if(inst.live || inst.dead) return;
     if(g){ inst.offText = 'Approximate area'; lmSetTarget(inst, g.lat, g.lng, { spd:0, ts:Date.now(), approx:true }); lmSetStatus(inst, 'stale', 'Approximate area'); lmApplyStatus(inst, true); }
-    else if(!inst.target) lmNoLocation(inst);
+    else if(!inst.target && !inst.mine) lmNoLocation(inst);
   };
   if(!inst.mine && fb()){
     const un = fb().onSnapshot(fb().doc(fb().db, 'presence', inst.uid), snap => {
@@ -9545,7 +9656,7 @@ function lmNoLocation(inst){
 function lmDrawMe(inst){
   if(!inst.map || !inst.me || inst.mine) return;
   if(inst.meMk){ inst.meMk.setLngLat([inst.me.lng, inst.me.lat]); return; }
-  const e = document.createElement('div'); e.className = 'lm-me'; e.innerHTML = '<span>You</span>';
+  const e = document.createElement('div'); e.className = 'lm-me'; e.innerHTML = '<svg viewBox="0 0 24 40" width="16" height="28" aria-label="You"><circle cx="12" cy="6" r="5" fill="#0B3D91"/><path d="M5 14c0-2 2-3 4-3h6c2 0 4 1 4 3v10l-2.5 1V38a1.5 1.5 0 0 1-3 0V27h-1v11a1.5 1.5 0 0 1-3 0V25L5 24z" fill="#0B3D91"/></svg>';
   inst.meMk = new maplibregl.Marker({ element:e, anchor:'center' }).setLngLat([inst.me.lng, inst.me.lat]).addTo(inst.map);
 }
 
@@ -9560,6 +9671,7 @@ function lmSetTarget(inst, lat, lng, meta){
     const dt = (ts - prev.ts) / 1000; moved = haversineKm(prev.lat, prev.lng, lat, lng) * 1000;
     if(dt > 0.4 && moved > Math.max(acc * 0.6, 5)){ spd = moved / dt; inst.hdTarget = lmBearing(prev, { lat, lng }); }
   }
+  if(prev && !meta.approx && !inst.targetApprox && moved < Math.max(3, Math.min(acc, 25) * 0.5) && ts - prev.ts < 8000) return;
   if(isFinite(meta.spd) && meta.spd >= 0 && !meta.approx) spd = Math.max(spd * 0.4, meta.spd);
   if(isFinite(meta.hd) && spd > 1.2) inst.hdTarget = meta.hd;
   if(meta.approx) spd = 0;
@@ -9568,8 +9680,10 @@ function lmSetTarget(inst, lat, lng, meta){
   if(!prev || moved > 3 || ts - prev.ts > 3000) inst.lastFix = { lat, lng, ts };
   inst.fixTs = ts; inst.fixRecv = Date.now();
   const first = !inst.target;
+  const wasApprox = !!inst.targetApprox; inst.targetApprox = !!meta.approx;
   inst.target = { lat, lng };
-  if(first){
+  if(!first && wasApprox && !meta.approx){ inst.pos = { lat, lng }; inst.lastFix = { lat, lng, ts }; if(inst.map.loaded()) lmFrame(inst, true); }
+  else if(first){
     inst.pos = { lat, lng };
     if(inst.me && !inst.mine) inst.hdTarget = inst.hdCur = lmBearing(inst.target, inst.me);
     inst.tagMk.addTo(inst.map); inst.dotMk.addTo(inst.map);
