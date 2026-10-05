@@ -1,7 +1,7 @@
-/* ZimPro Linkup — background alerts (calls & messages) via Firebase Cloud Messaging.
-   This file must sit NEXT TO index.html (same folder, top level of the website). */
-importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js');
+/* ZimPro-Linkup — background push service worker.
+   Must sit in the SAME folder as index.html (site root). */
+importScripts("https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/12.1.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
   apiKey: "AIzaSyA7okyR40IeNWJjH5h0cbQF8yYR_5QHi3w",
@@ -13,35 +13,67 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+const ICON = "icons/zpl-192.png";
 
-/* data-only pushes from the push server arrive here while the app is closed or in the background */
-messaging.onBackgroundMessage(payload => {
-  if (payload.notification) return;                 // FCM already shows those by itself
+/* The push server sends DATA-ONLY messages, so we build the notification here.
+   Tags match the ones index.html uses (msg_<convId> / call_<callId>) so you never get duplicates. */
+messaging.onBackgroundMessage((payload) => {
   const d = payload.data || {};
-  const isCall = d.type === 'call';
-  return self.registration.showNotification(d.title || 'ZimPro Linkup', {
-    body: d.body || (isCall ? 'Incoming call' : 'You have a new message'),
-    icon: 'icons/icon-192.png',
-    badge: 'icons/favicon-64.png',
-    tag: d.tag || (isCall ? 'zpl-call' : 'zpl-msg'),
+  const isCall = d.kind === "call";
+
+  const title = d.title || (isCall ? "Incoming ZimPro call" : "New message");
+  const options = {
+    body: d.body || "",
+    icon: ICON,
+    badge: ICON,
+    tag: isCall ? "call_" + d.callId : "msg_" + (d.convId || d.uid || "x"),
     renotify: true,
-    requireInteraction: isCall,
-    vibrate: isCall ? [300, 150, 300, 150, 300, 150, 300] : [120, 60, 120],
-    data: { url: d.url || self.registration.scope, type: d.type || '' }
-  });
+    data: d,
+  };
+
+  if (isCall) {
+    options.requireInteraction = true;
+    options.vibrate = [300, 150, 300, 150, 300];
+    options.actions = [
+      { action: "answer", title: "Answer" },
+      { action: "decline", title: "Decline" },
+    ];
+  }
+
+  return self.registration.showNotification(title, options);
 });
 
-/* tapping a notification opens / focuses ZimPro */
-self.addEventListener('notificationclick', event => {
+/* Tap on a notification (or one of its buttons) */
+self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = (event.notification.data && event.notification.data.url) || self.registration.scope;
+  const d = event.notification.data || {};
+  const msg = {
+    type: "zpl-open",
+    kind: d.kind,
+    uid: d.uid,
+    name: d.name,
+    photo: d.photo,
+    callId: d.callId,
+    action: event.action || "",
+  };
+
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      for (const c of list) { if (c.url.indexOf(self.registration.scope) === 0 && 'focus' in c) return c.focus(); }
-      return clients.openWindow(target);
-    })
+    (async () => {
+      const all = await clients.matchAll({ type: "window", includeUncontrolled: true });
+      // App already open somewhere: focus it and hand over the details
+      for (const c of all) {
+        if ("focus" in c) {
+          await c.focus();
+          c.postMessage(msg);
+          return;
+        }
+      }
+      // App closed: open it with the details in the URL (index.html reads these on launch)
+      const q = new URLSearchParams({ from: "push", open: d.kind || "", uid: d.uid || "", name: d.name || "", callId: d.callId || "", act: event.action || "" });
+      await clients.openWindow("./?" + q.toString());
+    })()
   );
 });
 
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
