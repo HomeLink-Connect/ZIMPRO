@@ -3889,7 +3889,7 @@ async function handlePostPhotoPick(e){
       try{ const d = await getVideoDuration(f); if(d > 61){ toast('Each video must be 60 seconds or shorter.', true); continue; } }
       catch(err){ toast(err.message || 'Could not use that video.', true); continue; }
       pjMedia.push({ file:f, type:'video', preview:URL.createObjectURL(f) });
-    } else pjMedia.push({ file:f, type:'image', preview:URL.createObjectURL(f) });
+    } else { const cf = await zplCrop(f, 4 / 3, 1280); if(!cf) continue; pjMedia.push({ file:cf, type:'image', preview:URL.createObjectURL(cf) }); }
   }
   pjMediaRender();
 }
@@ -4069,9 +4069,11 @@ async function removePortfolioPhoto(index){
 async function handleMyPhotoPick(e){
   const file = e.target.files && e.target.files[0];
   if(!file || !currentUser) return;
+  e.target.value = '';
+  const cropped = await zplCrop(file, 1, 600); if(!cropped) return;
   try{
     if(!fb()){ toast('Not connected yet — try again shortly.', true); return; }
-    const url = await compressImageToDataURL(file, { maxDim:500, quality:0.75, maxBytes:120000 });
+    const url = await compressImageToDataURL(cropped, { maxDim:500, quality:0.75, maxBytes:120000 });
     await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { photo: url }, { merge:true });
     currentUser.photo = url;
     fillMyProfile();
@@ -5966,6 +5968,43 @@ document.addEventListener('visibilitychange', () => {
   let ts = 0; try{ ts = +localStorage.getItem('zpl_push_ts') || 0; }catch(e){}
   if(Date.now() - ts > 6 * 36e5) enablePush();
 });
+/* ===== v3: crop / adjust photos before upload ===== */
+function zplCrop(file, aspect, outW){
+  return new Promise(resolve => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.onload = () => {
+      const W = Math.min(window.innerWidth - 24, 420), H = Math.round(W / aspect);
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:12px;';
+      const bs = 'padding:12px 20px;border:0;border-radius:99px;color:#fff;font:600 14px Inter,sans-serif;';
+      ov.innerHTML = `<div style="color:#fff;font:600 15px Inter,sans-serif">Drag to move · slide to zoom</div><canvas width="${W}" height="${H}" style="border-radius:12px;touch-action:none;background:#000"></canvas><input type="range" min="1" max="4" step="0.01" value="1" style="width:${W}px;max-width:90vw"><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button data-x style="${bs}background:#444">Cancel</button><button data-o style="${bs}background:#555">Original</button><button data-ok style="${bs}background:#1877F2">Use photo</button></div>`;
+      document.body.appendChild(ov);
+      const cv = ov.querySelector('canvas'), g = cv.getContext('2d'), sl = ov.querySelector('input');
+      let z = 1, cx = img.width / 2, cy = img.height / 2, last = null;
+      const base = () => Math.max(W / img.width, H / img.height);
+      const draw = () => {
+        const s = base() * z, hw = W / 2 / s, hh = H / 2 / s;
+        cx = Math.max(hw, Math.min(img.width - hw, cx)); cy = Math.max(hh, Math.min(img.height - hh, cy));
+        g.fillStyle = '#000'; g.fillRect(0, 0, W, H); g.drawImage(img, cx - hw, cy - hh, W / s, H / s, 0, 0, W, H);
+      };
+      draw();
+      cv.onpointerdown = e => { last = [e.clientX, e.clientY]; cv.setPointerCapture(e.pointerId); };
+      cv.onpointermove = e => { if(!last) return; const s = base() * z; cx -= (e.clientX - last[0]) / s; cy -= (e.clientY - last[1]) / s; last = [e.clientX, e.clientY]; draw(); };
+      cv.onpointerup = cv.onpointercancel = () => { last = null; };
+      sl.oninput = () => { z = +sl.value; draw(); };
+      const done = v => { ov.remove(); URL.revokeObjectURL(url); resolve(v); };
+      ov.querySelector('[data-x]').onclick = () => done(null);
+      ov.querySelector('[data-o]').onclick = () => done(file);
+      ov.querySelector('[data-ok]').onclick = () => {
+        const s = base() * z, o = document.createElement('canvas'); o.width = outW; o.height = Math.round(outW / aspect);
+        o.getContext('2d').drawImage(img, cx - W / 2 / s, cy - H / 2 / s, W / s, H / s, 0, 0, o.width, o.height);
+        o.toBlob(b => done(b ? new File([b], 'crop.jpg', { type:'image/jpeg' }) : file), 'image/jpeg', 0.88);
+      };
+    };
+    img.src = url;
+  });
+}
 /* ===== v2: chat menu (delete / block / report), blocking, cover photo ===== */
 function zplConvVisible(c){
   const me = currentUser && currentUser.uid; if(!me) return true;
@@ -6011,14 +6050,14 @@ async function chatReportUser(){
   } catch(e){ toast('Could not send report.', true); }
 }
 async function handleMyCoverPick(e){
-  const f = e.target.files && e.target.files[0]; e.target.value = ''; if(!f) return;
+  const f0 = e.target.files && e.target.files[0]; e.target.value = ''; if(!f0) return;
   try{
+    const f = await zplCrop(f0, 2.5, 1200); if(!f) return;
     toast('Uploading cover…');
-    const r = await cloudUploadImage(f, 1600); const url = typeof r === 'string' ? r : (r && (r.url || r.src));
-    if(!url) throw new Error('no url');
+    const url = await prepareImage(f, 180000, 1200);
     await fb().setDoc(fb().doc(fb().db, 'users', currentUser.uid), { cover: url }, { merge:true });
     currentUser.cover = url; zplPaintMyCover(true); toast('Cover photo updated.');
-  } catch(err){ console.error(err); toast('Could not upload cover photo.', true); }
+  } catch(err){ console.error('cover failed', err); toast(friendlyUploadError(err, 'Could not upload cover photo.') + (err && err.code ? ' (' + err.code + ')' : ''), true); }
 }
 let _coverShown = '', _coverFetched = false;
 function zplPaintMyCover(force){
@@ -9450,6 +9489,10 @@ function lmTick(inst, st, dt){
     const nl = !!inst.presFresh || Date.now() < inst.activeUntil;
     if(nl !== inst.live){ inst.live = nl; lmSetStatus(inst, nl ? 'live' : 'stale', nl ? 'Live now' : (inst.offText || 'Last known')); inst.sig = null; }
   }
+  if(!inst.mine && inst.routeGeo && inst.routeGeo.geometry && st.map && Date.now() - (inst._rt || 0) > 140){
+    const cs = inst.routeGeo.geometry.coordinates, L = cs[cs.length - 1];
+    if(L && Math.abs(L[0] - inst.pos.lng) + Math.abs(L[1] - inst.pos.lat) > 2e-6){ L[0] = inst.pos.lng; L[1] = inst.pos.lat; inst._rt = Date.now(); const rs = st.map.getSource('route'); if(rs) rs.setData(inst.routeGeo); }
+  }
   const age = Date.now() - (inst.fixRecv || 0);
   const want = (inst.live && age < 30000) ? (inst.spd || 0) : 0;
   inst.spdS = (inst.spdS || 0) + (want - (inst.spdS || 0)) * (1 - Math.exp(-dt * 2));
@@ -9796,7 +9839,7 @@ function lmApplyRoute(inst){
   const src = inst.map.getSource && inst.map.getSource('route');
   if(src){
     inst.routeCoords = coords;
-    inst.routeGeo = { type:'Feature', geometry:{ type:'LineString', coordinates:coords || [[inst.me.lng, inst.me.lat], [inst.target.lng, inst.target.lat]] }, properties:{} };
+    inst.routeGeo = { type:'Feature', geometry:{ type:'LineString', coordinates:coords ? [[inst.me.lng, inst.me.lat], ...coords, [inst.pos ? inst.pos.lng : inst.target.lng, inst.pos ? inst.pos.lat : inst.target.lat]] : [[inst.me.lng, inst.me.lat], [inst.target.lng, inst.target.lat]] }, properties:{} };
     src.setData(inst.routeGeo);
   }
   const nav = inst.node.querySelector('[data-nav]');
