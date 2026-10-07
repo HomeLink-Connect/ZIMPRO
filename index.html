@@ -15,7 +15,7 @@
      replacing YOUR-DOMAIN with your real domain. WhatsApp/Facebook only accept a hosted https image here. -->
 <!-- <meta property="og:image" content="https://YOUR-DOMAIN/share-card.jpg"> -->
 <!-- <meta name="twitter:image" content="https://YOUR-DOMAIN/share-card.jpg"> -->
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1444,6 +1444,43 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
 .pj-it .pj-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#fff;font-size:20px;text-shadow:0 1px 6px rgba(0,0,0,.6);}
 .pj-strip{display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:12px;-webkit-overflow-scrolling:touch;}
 .pj-strip img,.pj-strip video{flex:0 0 100%;max-height:380px;object-fit:cover;scroll-snap-align:center;border-radius:12px;background:#000;}
+.lm-me::after{content:attr(data-l);position:absolute;top:24px;left:50%;transform:translateX(-50%);background:#fff;color:#0B3D91;font:700 11px Inter,sans-serif;padding:2px 8px;border-radius:99px;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap;}
+.lm-dest{position:relative;width:22px;height:22px;border-radius:50%;background:#E5334B;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.45);pointer-events:none;}
+.lm-dest::before{content:'';position:absolute;inset:-14px;border-radius:50%;border:2px solid rgba(229,51,75,.55);animation:lmDestPulse 1.8s ease-out infinite;}
+.lm-dest .dl{position:absolute;top:30px;left:50%;transform:translateX(-50%);background:#E5334B;color:#fff;font:700 11px Inter,sans-serif;padding:3px 9px;border-radius:99px;white-space:nowrap;box-shadow:0 1px 5px rgba(0,0,0,.4);}
+@keyframes lmDestPulse{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.zd-banner{margin:0 0 18px;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#0B3D91,#1877F2);color:#fff;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 8px 22px rgba(24,119,242,.28);}
+.zd-banner i.ic{font-size:26px;opacity:.95;}.zd-banner b{display:block;font:800 15px Sora,sans-serif;}.zd-banner span{font-size:12.5px;opacity:.9;}
+.zd-tabs{display:flex;gap:8px;margin-bottom:12px;}.zd-tabs button,.zd-chip{flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:#fff;font:700 13.5px Inter,sans-serif;color:var(--text);}
+.zd-tabs button.on,.zd-chip.on{background:#1877F2;border-color:#1877F2;color:#fff;}
+.zd-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}.zd-chip{flex:0 0 auto;padding:8px 14px;}
+.zd-sw{width:28px;height:28px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #cbd5e1;cursor:pointer;}.zd-sw.on{box-shadow:0 0 0 2.5px #111827;}
+.zd-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.zd-card h4{margin:0 0 10px;font:800 14px Sora,sans-serif;}
+.zd-card label{display:block;font:600 12px Inter,sans-serif;color:#64748b;margin:8px 0 3px;}
+.zd-card input,.zd-card textarea,.zd-card select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border);font:500 14px Inter,sans-serif;background:#fff;color:var(--text);}
+.zd-card textarea{min-height:76px;resize:vertical;}
+.zd-sub{border-top:1px dashed var(--border);margin-top:10px;padding-top:6px;}
+.zd-btn{border:0;border-radius:12px;padding:12px 16px;font:700 14px Inter,sans-serif;background:#1877F2;color:#fff;cursor:pointer;}.zd-btn.alt{background:#E8F0FE;color:#1877F2;}.zd-btn.red{background:#fdecee;color:#E5334B;}
+#zdWrap{background:#e5e9f0;border-radius:14px;padding:10px;overflow:hidden;}#zdPaper{width:794px;min-height:1123px;background:#fff;color:#1f2937;font:400 13.5px/1.5 Inter,sans-serif;transform-origin:top left;box-shadow:0 4px 20px rgba(0,0,0,.18);}
+#zdPrint{display:none;}
+@media print{@page{size:A4;margin:0}body>*:not(#zdPrint){display:none !important}#zdPrint{display:block !important;width:794px}#zdPrint *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.zd-hero{margin:0 0 14px;padding:18px;border-radius:18px;background:linear-gradient(135deg,#0B3D91,#1877F2);color:#fff;}.zd-hero b{display:block;font:800 18px Sora,sans-serif;}.zd-hero span{font-size:12.5px;opacity:.92;}
+.zd-tpls{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.zd-tpl{border:2px solid var(--border);border-radius:14px;background:#fff;padding:6px;cursor:pointer;font:700 12px Inter,sans-serif;color:var(--text);}
+.zd-tpl.on{border-color:#1877F2;box-shadow:0 0 0 3px rgba(24,119,242,.18);}
+.zd-mini{position:relative;height:74px;border-radius:8px;overflow:hidden;background:#fff;border:1px solid #e5e7eb;margin-bottom:5px;}.zd-mini i,.zd-mini u{position:absolute;display:block;text-decoration:none;}
+.zd-photo{display:flex;align-items:center;gap:12px;}.zd-thumb{width:58px;height:58px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 0 0 1.5px #cbd5e1;flex:none;background:#eef2f7;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:22px;}
+.zd-bar{position:sticky;bottom:0;z-index:6;margin:0 -2px;padding:10px 4px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(255,255,255,0),#fff 28%);display:flex;gap:8px;}
+.zd-hint{font-size:12px;color:#64748b;margin:0 0 8px;line-height:1.45;}
+.trend-head{display:flex !important;flex-wrap:wrap;align-items:center;gap:10px 8px;}
+.trend-head .th-title{flex:1;min-width:0;}
+.tog-row{order:3;flex:0 0 100%;display:flex;align-items:center;gap:10px;}
+.doc-tog{display:flex;height:34px;padding:3px;border-radius:99px;background:var(--surface-2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.07);gap:2px;}
+.doc-tog button{height:28px;padding:0 13px;border:0;border-radius:99px;background:none;display:flex;align-items:center;gap:6px;font:800 11px Inter,sans-serif;color:var(--text-dim);cursor:pointer;transition:background .2s,transform .15s;}
+.doc-tog button i{font-size:12.5px;}
+.doc-tog button[data-d=cv] i{color:#7C3AED;}.doc-tog button[data-d=letter] i{color:#0E9F6E;}
+.doc-tog button:active{background:#fff;transform:scale(.95);box-shadow:0 1px 4px rgba(0,0,0,.15);}
 /* ===== v2: end-call button, chat menu, cover photo, human marker ===== */
 #callOverlay > button.call-endfab{display:none;position:absolute;left:50%;bottom:calc(26px + var(--safe-b,0px));transform:translateX(-50%);width:68px;height:68px;border-radius:50%;border:0;background:#E5334B;color:#fff;font-size:24px;align-items:center;justify-content:center;z-index:7;box-shadow:0 8px 24px rgba(229,51,75,.55);}
 #callOverlay.vid > button.call-endfab,#callOverlay.vidlive > button.call-endfab{display:flex;}
@@ -1456,8 +1493,7 @@ html[data-theme=light] body,html[data-theme=emerald] body{background:var(--bg);}
 html[data-theme=dark] .chat-menu{background:var(--surface);}
 .my-cover{align-self:stretch;margin:-20px -16px 4px;height:140px;background:linear-gradient(135deg,#1877F2,#0B3D91) center/cover no-repeat;position:relative;}
 .my-cover .cv-btn{position:absolute;right:12px;bottom:12px;border:0;border-radius:99px;padding:8px 14px;background:rgba(0,0,0,.5);color:#fff;font:600 12px 'Inter',sans-serif;display:flex;gap:6px;align-items:center;cursor:pointer;}
-.lm-me{background:none !important;border:0 !important;box-shadow:none !important;width:auto !important;height:auto !important;animation:none !important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));}
-.lm-me span{display:none !important;}
+.lm-me{background:#1877F2 !important;border:3px solid #fff !important;border-radius:50% !important;width:18px !important;height:18px !important;box-shadow:0 0 0 6px rgba(24,119,242,.25),0 2px 6px rgba(0,0,0,.4) !important;}
 </style>
 </head>
 <body>
@@ -1719,8 +1755,8 @@ html[data-theme=dark] .chat-menu{background:var(--surface);}
       <div class="trend-block">
         <div class="trend-head">
           <span class="th-title">Trending Services</span>
-          <div class="sm-tog" id="smTog" data-on="services" role="group" aria-label="Services or Marketplace"><span class="sm-thumb"></span><button type="button" data-s="services" aria-label="Services"><i class="fa-solid fa-fire"></i>Services</button><button type="button" data-s="market" onclick="smGo()" aria-label="Open Marketplace"><i class="fa-solid fa-bag-shopping"></i>Market</button><span class="sm-dot"></span></div>
           <span class="see-all" onclick="seeAllNearYou()">See All</span>
+          <div class="tog-row"><div class="sm-tog" id="smTog" data-on="services" role="group" aria-label="Services or Marketplace"><span class="sm-thumb"></span><button type="button" data-s="services" aria-label="Services"><i class="fa-solid fa-fire"></i>Services</button><button type="button" data-s="market" onclick="smGo()" aria-label="Open Marketplace"><i class="fa-solid fa-bag-shopping"></i>Market</button><span class="sm-dot"></span></div><div class="doc-tog" role="group" aria-label="CV and Letter builder"><button type="button" data-d="cv" onclick="openDocs('cv')" aria-label="CV builder"><i class="fa-solid fa-id-card-clip"></i>CV</button><button type="button" data-d="letter" onclick="openDocs('letter')" aria-label="Letter builder"><i class="fa-solid fa-envelope-open-text"></i>Letter</button></div></div>
         </div>
         <div class="trend-scroll" id="trendingScroll"></div>
       </div>
@@ -2073,6 +2109,7 @@ html[data-theme=dark] .chat-menu{background:var(--surface);}
   </div>
 
   <!-- ---------- SCHOOLS ---------- -->
+  <div class="scroll-area screen-view hidden" id="docsScreen"><div class="pad" id="docsRoot"></div></div>
   <div class="scroll-area screen-view hidden" id="schoolsScreen">
     <div class="pad">
       <button class="btn btn-blue btn-block" style="margin-bottom:12px;" onclick="startNewSchool()"><i class="fa-solid fa-plus"></i> List Your School</button>
@@ -6067,6 +6104,143 @@ function zplPaintMyCover(force){
 }
 setInterval(zplPaintMyCover, 2000);
 
+/* ===== v4: professional CV & letter builder ===== */
+const zD = (() => {
+  const E = t => escapeHtml(String(t == null ? '' : t));
+  const today = () => new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  const S = { mode:'cv', tpl:'exec', ltpl:'formal', color:'#1877F2',
+    cv:{ name:'', title:'', email:'', phone:'', place:'', summary:'', skills:'', langs:'', refs:'Available on request', photo:'', exp:[{ r:'', c:'', d:'', b:'' }], edu:[{ q:'', s:'', d:'', res:'' }], cert:[], proj:[] },
+    lt:{ type:'job', date:today(), toName:'', toCo:'', toAddr:'', pos:'', last:'', subject:'', body:'', close:'Yours sincerely,' } };
+  try{ const j = JSON.parse(localStorage.getItem('zplDocsV1') || 'null'); if(j) Object.assign(S, j); }catch(e){}
+  S.cv.cert = S.cv.cert || []; S.cv.proj = S.cv.proj || [];
+  const save = () => { try{ localStorage.setItem('zplDocsV1', JSON.stringify(S)); }catch(e){} };
+  const COLORS = ['#1877F2', '#0B3D91', '#0E9F6E', '#E5334B', '#7C3AED', '#111827'];
+  const list = v => String(v || '').split(/[,\n]/).map(x => x.trim()).filter(Boolean);
+  const H = (t, side) => `<div style="font:800 11.5px Sora,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:${side ? '#fff' : 'var(--ac)'};border-bottom:2px solid ${side ? 'rgba(255,255,255,.55)' : 'var(--ac)'};padding-bottom:4px;margin:18px 0 9px">${t}</div>`;
+  const expH = () => S.cv.exp.filter(x => x.r || x.c).map(x => `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:8px"><b>${E(x.r)}</b><span style="color:#6b7280;font-size:12px;white-space:nowrap">${E(x.d)}</span></div><div style="color:var(--ac);font-weight:600;font-size:13px">${E(x.c)}</div>${x.b ? `<ul style="margin:5px 0 0 16px;padding:0;line-height:1.5">${String(x.b).split('\n').filter(l => l.trim()).map(l => `<li>${E(l.replace(/^[-•*]\s*/, ''))}</li>`).join('')}</ul>` : ''}</div>`).join('');
+  const eduH = () => S.cv.edu.filter(x => x.q || x.s).map(x => `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;gap:8px"><b>${E(x.q)}</b><span style="color:#6b7280;font-size:12px;white-space:nowrap">${E(x.d)}</span></div><div style="color:#4b5563">${E(x.s)}</div>${x.res ? `<div style="font-size:12.5px;color:#374151;margin-top:2px">Results: ${E(x.res)}</div>` : ''}</div>`).join('');
+  const certH = () => S.cv.cert.filter(x => x.n).map(x => `<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:8px"><b>${E(x.n)}</b><span style="color:#6b7280;font-size:12px;white-space:nowrap">${E(x.y)}</span></div>${x.i ? `<div style="color:#4b5563;font-size:12.5px">${E(x.i)}</div>` : ''}</div>`).join('');
+  const projH = () => S.cv.proj.filter(x => x.n).map(x => `<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;gap:8px"><b>${E(x.n)}</b>${x.l ? `<span style="color:var(--ac);font-size:11.5px;word-break:break-all;text-align:right">${E(x.l)}</span>` : ''}</div>${x.t ? `<div style="color:var(--ac);font-weight:600;font-size:12px">${E(x.t)}</div>` : ''}${x.w ? `<div style="margin-top:3px"><b style="font-size:12px">What it does:</b> ${E(x.w)}</div>` : ''}${x.m ? `<div style="margin-top:2px"><b style="font-size:12px">What I built:</b> ${E(x.m)}</div>` : ''}</div>`).join('');
+  const ph = sz => S.cv.photo ? `<img src="${S.cv.photo}" alt="" style="width:${sz}px;height:${sz}px;border-radius:50%;object-fit:cover;border:4px solid #fff;display:block;flex:none">` : '';
+  const chips = (arr, dark) => arr.map(x => `<span style="display:inline-block;margin:0 5px 6px 0;padding:4px 11px;border-radius:99px;font-size:12px;font-weight:600;${dark ? 'background:rgba(255,255,255,.18);color:#fff' : 'background:color-mix(in srgb,var(--ac) 12%,#fff);color:var(--ac)'}">${E(x)}</span>`).join('');
+  const contact = (c, col) => [c.phone && ['fa-phone', c.phone], c.email && ['fa-envelope', c.email], c.place && ['fa-location-dot', c.place]].filter(Boolean).map(a => `<div style="margin:4px 0;color:${col};word-break:break-word"><i class="fa-solid ${a[0]}" style="width:18px;opacity:.8"></i>${E(a[1])}</div>`).join('');
+  function cvHtml(){
+    const c = S.cv, sk = list(c.skills), lg = list(c.langs);
+    const sum = c.summary ? H('Profile') + `<p style="margin:0">${E(c.summary)}</p>` : '';
+    const ex = expH() ? H('Experience') + expH() : '', ed = eduH() ? H('Education') + eduH() : '', pr = projH() ? H('Projects') + projH() : '', ce = certH() ? H('Certifications &amp; Training') + certH() : '';
+    const rf = c.refs ? H('References') + `<p style="margin:0">${E(c.refs)}</p>` : '';
+    const lgs = lg.length ? H('Languages') + lg.map(x => `<div style="margin:3px 0">${E(x)}</div>`).join('') : '';
+    const cl = [c.phone, c.email, c.place].filter(Boolean).map(E).join(' &nbsp;•&nbsp; ');
+    if(S.tpl === 'right') return `<div style="display:flex;min-height:1123px"><div style="flex:1;padding:40px 34px"><div style="font:800 34px/1.1 Sora,sans-serif;color:#111827">${E(c.name) || 'Your Name'}</div><div style="font:600 15px Inter,sans-serif;color:var(--ac);margin-top:6px">${E(c.title)}</div>${sum}${ex}${pr}${ed}</div><div style="width:240px;flex:none;background:color-mix(in srgb,var(--ac) 9%,#f8fafc);padding:34px 22px;border-left:4px solid var(--ac)">${c.photo ? `<div style="margin:0 auto 14px;width:120px">${ph(120)}</div>` : ''}${H('Contact')}${contact(c, '#374151')}${sk.length ? H('Skills') + chips(sk) : ''}${ce}${lgs}</div></div>`;
+    if(S.tpl === 'dark') return `<div style="background:#0f172a;color:#fff;padding:36px 42px;border-bottom:6px solid var(--ac);display:flex;align-items:center;gap:22px">${ph(108)}<div><div style="font:800 34px/1.1 Sora,sans-serif">${E(c.name) || 'Your Name'}</div><div style="font:700 15px Inter,sans-serif;color:#fff;opacity:.85;margin-top:6px">${E(c.title)}</div><div style="font-size:12.5px;opacity:.8;margin-top:8px">${cl}</div></div></div><div style="padding:8px 42px 40px">${sum}<div style="display:grid;grid-template-columns:1.7fr 1fr;gap:28px"><div>${ex}${pr}${ed}</div><div>${sk.length ? H('Skills') + chips(sk) : ''}${ce}${lgs}${rf}</div></div></div>`;
+    if(S.tpl === 'creative') return `<div style="height:130px;background:var(--ac)"></div><div style="text-align:center;margin-top:-62px">${c.photo ? `<div style="width:124px;margin:0 auto">${ph(124)}</div>` : ''}<div style="font:800 34px/1.1 Sora,sans-serif;color:#111827;margin-top:${c.photo ? 10 : 70}px">${E(c.name) || 'Your Name'}</div><div style="font:600 15px Inter,sans-serif;color:var(--ac);margin-top:6px">${E(c.title)}</div><div style="font-size:12.5px;color:#4b5563;margin-top:8px">${cl}</div></div><div style="padding:0 40px 40px">${sum}<div style="display:grid;grid-template-columns:1fr 1fr;gap:26px"><div>${ex}${pr}</div><div>${ed}${ce}${sk.length ? H('Skills') + chips(sk) : ''}${lgs}${rf}</div></div></div>`;
+    if(S.tpl === 'exec') return `<div style="display:flex;min-height:1123px"><div style="width:250px;flex:none;background:var(--ac);color:#fff;padding:34px 22px">${ph(130) ? `<div style="margin:0 auto 18px;width:130px">${ph(130)}</div>` : ''}${H('Contact', 1)}${contact(c, '#fff')}${sk.length ? H('Skills', 1) + chips(sk, 1) : ''}${lg.length ? H('Languages', 1) + lg.map(x => `<div style="margin:3px 0">${E(x)}</div>`).join('') : ''}</div><div style="flex:1;padding:38px 32px"><div style="font:800 32px/1.1 Sora,sans-serif;color:#111827">${E(c.name) || 'Your Name'}</div><div style="font:600 15px Inter,sans-serif;color:var(--ac);margin-top:6px">${E(c.title)}</div>${sum}${ex}${pr}${ed}${ce}${rf}</div></div>`;
+    if(S.tpl === 'band') return `<div style="background:var(--ac);color:#fff;padding:34px 40px;display:flex;align-items:center;gap:22px">${ph(112)}<div><div style="font:800 32px/1.1 Sora,sans-serif">${E(c.name) || 'Your Name'}</div><div style="font:600 15px Inter,sans-serif;opacity:.92;margin-top:6px">${E(c.title)}</div></div></div><div style="padding:14px 40px 40px"><div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:#4b5563">${[c.phone, c.email, c.place].filter(Boolean).map(E).join(' &nbsp;•&nbsp; ')}</div>${sum}<div style="display:grid;grid-template-columns:1.8fr 1fr;gap:28px"><div>${ex}${pr}${ed}${ce}</div><div>${sk.length ? H('Skills') + chips(sk) : ''}${lg.length ? H('Languages') + lg.map(x => `<div style="margin:3px 0">${E(x)}</div>`).join('') : ''}${rf}</div></div></div>`;
+    return `<div style="padding:46px 50px"><div style="display:flex;align-items:center;gap:20px;border-bottom:3px solid var(--ac);padding-bottom:16px">${ph(100)}<div><div style="font:800 36px/1.05 Sora,sans-serif;color:#111827">${E(c.name) || 'Your Name'}</div><div style="font:600 15px Inter,sans-serif;color:var(--ac);margin-top:6px">${E(c.title)}</div><div style="font-size:12.5px;color:#4b5563;margin-top:8px">${[c.phone, c.email, c.place].filter(Boolean).map(E).join(' &nbsp;•&nbsp; ')}</div></div></div>${sum}${ex}${pr}${ed}${ce}${sk.length ? H('Skills') + chips(sk) : ''}${lg.length ? H('Languages') + `<p style="margin:0">${lg.map(E).join(' • ')}</p>` : ''}${rf}</div>`;
+  }
+  function genBody(){
+    const c = S.cv, l = S.lt, sk = list(c.skills).slice(0, 3).join(', '), e0 = c.exp[0] || {};
+    const to = l.toCo || 'your company', pos = l.pos || 'the advertised position';
+    if(l.type === 'resign') return `Please accept this letter as formal notice of my resignation from my position${c.title ? ' as ' + c.title : ''} at ${to}${l.last ? ', with my last working day being ' + l.last : ''}.\n\nI am grateful for the opportunities and support I have received during my time here, and I will do everything I can to make the handover smooth and complete all outstanding work.\n\nThank you for the experience. I wish you and the team continued success.`;
+    if(l.type === 'request') return `I am writing to formally request ${l.pos || 'your consideration regarding the matter stated above'}.\n\nI would be grateful for your kind response at your earliest convenience, and I am happy to provide any further information you may need.\n\nThank you for your time and understanding.`;
+    return `I am writing to apply for the position of ${pos} at ${to}. ${c.title ? 'As a ' + c.title + (sk ? ' with strong skills in ' + sk : '') + ', ' : ''}I am confident that I can add real value to your team.\n\n${e0.r ? `In my role as ${e0.r}${e0.c ? ' at ' + e0.c : ''}, I developed the reliability, discipline and results-focused attitude that this position requires.` : 'I am a dedicated, reliable and fast-learning person who takes pride in delivering quality work.'}\n\nI have attached my CV for your consideration. I would welcome the opportunity to discuss how I can contribute to ${to}. Thank you for your time.`;
+  }
+  function ltHtml(){
+    const c = S.cv, l = S.lt, ps = (l.body || '').split(/\n\s*\n/).filter(x => x.trim()).map(x => `<p style="margin:0 0 13px;text-align:justify">${E(x).replace(/\n/g, '<br>')}</p>`).join('');
+    const rec = [l.toName, l.toCo, l.toAddr].filter(Boolean).map(E).join('<br>');
+    const send = [c.phone, c.email, c.place].filter(Boolean).map(E).join('<br>');
+    const body = `<div style="margin:26px 0 4px;color:#4b5563">${E(l.date)}</div><div style="margin:14px 0 20px;line-height:1.55">${rec}</div><div style="margin-bottom:10px">Dear ${E(l.toName) || 'Hiring Manager'},</div>${l.subject ? `<div style="font-weight:800;margin:0 0 14px;text-transform:uppercase;font-size:13px;letter-spacing:.03em">${E(l.subject)}</div>` : ''}${ps}<div style="margin-top:20px">${E(l.close)}</div><div style="margin-top:34px;font:800 16px Sora,sans-serif;color:var(--ac)">${E(c.name)}</div>`;
+    if(S.ltpl === 'modern') return `<div style="display:flex;min-height:1123px"><div style="width:14px;background:var(--ac);flex:none"></div><div style="flex:1;padding:50px 56px"><div style="font:800 30px/1.1 Sora,sans-serif;color:var(--ac)">${E(c.name) || 'Your Name'}</div><div style="color:#4b5563;margin-top:8px;font-size:12.5px;line-height:1.5">${send}</div><div style="height:2px;background:#e5e7eb;margin-top:16px"></div>${body}</div></div>`;
+    if(S.ltpl === 'elegant') return `<div style="padding:54px 64px;font-family:Georgia,'Times New Roman',serif"><div style="text-align:center"><div style="font:400 30px Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ac)">${E(c.name) || 'Your Name'}</div><div style="margin:12px auto 0;width:90px;height:2px;background:var(--ac)"></div><div style="color:#4b5563;margin-top:12px;font-size:12.5px">${[c.phone, c.email, c.place].filter(Boolean).map(E).join(' &nbsp;|&nbsp; ')}</div></div>${body}</div>`;
+    return `<div style="padding:56px 64px"><div style="text-align:right;color:#374151;line-height:1.55"><b style="font-size:15px">${E(c.name) || 'Your Name'}</b><br>${send}</div><div style="height:3px;background:var(--ac);margin:18px 0 0"></div>${body}</div>`;
+  }
+  const inp = (lab, p, v, t) => `<label>${lab}</label><input ${t ? `type="${t}"` : ''} data-p="${p}" value="${E(v)}" oninput="zD.i(this)">`;
+  const area = (lab, p, v, ph2) => `<label>${lab}</label><textarea data-p="${p}" placeholder="${E(ph2 || '')}" oninput="zD.i(this)">${E(v)}</textarea>`;
+  function form(){
+    const c = S.cv, l = S.lt;
+    if(S.mode === 'cv') return `<div class="zd-card"><h4>👤 About you</h4>
+      <label>Photo (optional)</label><div class="zd-photo">${c.photo ? `<img class="zd-thumb" src="${c.photo}" alt="">` : '<div class="zd-thumb">👤</div>'}<label for="zdPhoto" class="zd-btn alt" style="margin:0;color:#1877F2;font-size:14px">${c.photo ? 'Change photo' : 'Choose photo'}</label><input id="zdPhoto" type="file" accept="image/*" onchange="zD.photo(event)" style="display:none">${c.photo ? '<button class="zd-btn red" onclick="zD.nophoto()">Remove</button>' : ''}</div>
+      ${inp('Full name', 'cv.name', c.name)}${inp('Job title', 'cv.title', c.title)}${inp('Phone', 'cv.phone', c.phone, 'tel')}${inp('Email', 'cv.email', c.email, 'email')}${inp('Town / city', 'cv.place', c.place)}
+      ${area('Profile (2–3 sentences)', 'cv.summary', c.summary, 'Hard-working and reliable… with experience in…')}</div>
+      <div class="zd-card"><h4>💼 Work experience</h4>${c.exp.map((x, i) => `<div class="${i ? 'zd-sub' : ''}">${inp('Job title', 'cv.exp.' + i + '.r', x.r)}${inp('Company', 'cv.exp.' + i + '.c', x.c)}${inp('Dates (e.g. 2021 – 2024)', 'cv.exp.' + i + '.d', x.d)}${area('What you did (one point per line)', 'cv.exp.' + i + '.b', x.b)}${c.exp.length > 1 ? `<button class="zd-btn red" style="margin-top:8px" onclick="zD.del('exp',${i})">Remove</button>` : ''}</div>`).join('')}<button class="zd-btn alt" style="margin-top:10px" onclick="zD.add('exp')">+ Add job</button></div>
+      <div class="zd-card"><h4>🎓 Education</h4>${c.edu.map((x, i) => `<div class="${i ? 'zd-sub' : ''}">${inp('Qualification', 'cv.edu.' + i + '.q', x.q)}${inp('School / college', 'cv.edu.' + i + '.s', x.s)}${inp('Dates', 'cv.edu.' + i + '.d', x.d)}${inp('Results (optional) — e.g. 5 O-Levels, 3.6 GPA, Distinction', 'cv.edu.' + i + '.res', x.res)}${c.edu.length > 1 ? `<button class="zd-btn red" style="margin-top:8px" onclick="zD.del('edu',${i})">Remove</button>` : ''}</div>`).join('')}<button class="zd-btn alt" style="margin-top:10px" onclick="zD.add('edu')">+ Add education</button></div>
+      <div class="zd-card"><h4>🏅 Certifications &amp; training</h4><div class="zd-hint">Courses, licences and short trainings (e.g. First Aid, Cisco, Google, driving licence).</div>${c.cert.map((x, i) => `<div class="${i ? 'zd-sub' : ''}">${inp('Certificate / course', 'cv.cert.' + i + '.n', x.n)}${inp('Issued by', 'cv.cert.' + i + '.i', x.i)}${inp('Year', 'cv.cert.' + i + '.y', x.y)}<button class="zd-btn red" style="margin-top:8px" onclick="zD.del('cert',${i})">Remove</button></div>`).join('')}<button class="zd-btn alt" style="margin-top:10px" onclick="zD.add('cert')">+ Add certificate or training</button></div>
+      <div class="zd-card"><h4>💻 Projects <span style="font:600 11px Inter,sans-serif;color:#64748b">(optional · great for IT / software)</span></h4><div class="zd-hint">Explain briefly what each project does and what <b>you personally</b> built.</div>${c.proj.map((x, i) => `<div class="${i ? 'zd-sub' : ''}">${inp('Project name', 'cv.proj.' + i + '.n', x.n)}${inp('Tech used (optional)', 'cv.proj.' + i + '.t', x.t)}${area('What the project does', 'cv.proj.' + i + '.w', x.w, 'A web app that helps schools manage fees and results…')}${area('What you personally built', 'cv.proj.' + i + '.m', x.m, 'I built the login, the database and the payment screens…')}${inp('Link (optional)', 'cv.proj.' + i + '.l', x.l)}<button class="zd-btn red" style="margin-top:8px" onclick="zD.del('proj',${i})">Remove</button></div>`).join('')}<button class="zd-btn alt" style="margin-top:10px" onclick="zD.add('proj')">+ Add project</button></div>
+      <div class="zd-card"><h4>⚡ Skills &amp; more</h4>${area('Skills (separate with commas)', 'cv.skills', c.skills, 'Customer service, Microsoft Excel, Driving')}${area('Languages (commas)', 'cv.langs', c.langs, 'English, Shona, Ndebele')}${inp('References', 'cv.refs', c.refs)}</div>`;
+    return `<div class="zd-card"><h4>✉️ Letter details</h4><label>Type of letter</label><select data-p="lt.type" onchange="zD.i(this);zD.render()"><option value="job" ${l.type === 'job' ? 'selected' : ''}>Job application</option><option value="resign" ${l.type === 'resign' ? 'selected' : ''}>Resignation</option><option value="request" ${l.type === 'request' ? 'selected' : ''}>Formal request</option></select>
+      ${inp('Your name', 'cv.name', c.name)}${inp('Your phone', 'cv.phone', c.phone, 'tel')}${inp('Your email', 'cv.email', c.email, 'email')}${inp('Your town / city', 'cv.place', c.place)}${inp('Date', 'lt.date', l.date)}
+      ${inp('Send to (name, or leave empty)', 'lt.toName', l.toName)}${inp('Company / organisation', 'lt.toCo', l.toCo)}${inp('Their address (optional)', 'lt.toAddr', l.toAddr)}
+      ${inp(l.type === 'job' ? 'Position you are applying for' : l.type === 'request' ? 'What you are requesting' : 'Your position', 'lt.pos', l.pos)}${l.type === 'resign' ? inp('Last working day', 'lt.last', l.last) : ''}${inp('Subject line (optional)', 'lt.subject', l.subject)}</div>
+      <div class="zd-card"><h4>📝 The letter</h4><button class="zd-btn" onclick="zD.gen()">✨ Write it for me</button>${area('Letter body (edit freely)', 'lt.body', l.body, 'Tap “Write it for me” to get a professional first draft.')}${inp('Closing', 'lt.close', l.close)}</div>`;
+  }
+  const ln = (l, t, w) => `<u style="left:${l}%;top:${t}%;width:${w}%;height:4px;border-radius:2px;background:#cbd5e1"></u>`;
+  const MINI = a => ({
+    exec: `<i style="left:0;top:0;bottom:0;width:32%;background:${a}"></i>${ln(40, 20, 48)}${ln(40, 38, 52)}${ln(40, 56, 40)}`,
+    band: `<i style="left:0;right:0;top:0;height:30%;background:${a}"></i>${ln(10, 46, 80)}${ln(10, 62, 60)}${ln(10, 78, 70)}`,
+    clean: `${ln(10, 12, 45)}<i style="left:10%;right:10%;top:26%;height:3px;background:${a}"></i>${ln(10, 42, 80)}${ln(10, 58, 70)}${ln(10, 74, 55)}`,
+    right: `<i style="right:0;top:0;bottom:0;width:30%;background:${a};opacity:.35"></i>${ln(8, 20, 52)}${ln(8, 38, 56)}${ln(8, 56, 44)}`,
+    dark: `<i style="left:0;right:0;top:0;height:34%;background:#0f172a;border-bottom:3px solid ${a}"></i>${ln(10, 50, 80)}${ln(10, 66, 60)}${ln(10, 82, 70)}`,
+    creative: `<i style="left:0;right:0;top:0;height:26%;background:${a}"></i><i style="left:50%;top:14%;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:#fff;border:2px solid ${a}"></i>${ln(22, 56, 56)}${ln(10, 70, 80)}${ln(10, 84, 70)}`
+  });
+  function chipsRow(){
+    const sw = `<div class="zd-row">${COLORS.map(x => `<span class="zd-sw ${S.color === x ? 'on' : ''}" style="background:${x}" onclick="zD.col('${x}')"></span>`).join('')}</div>`;
+    if(S.mode === 'cv'){
+      const t = [['exec', 'Executive'], ['band', 'Modern'], ['clean', 'Classic'], ['right', 'Sidebar'], ['dark', 'Midnight'], ['creative', 'Creative']], m = MINI(S.color);
+      return `<div class="zd-tpls">${t.map(x => `<button class="zd-tpl ${S.tpl === x[0] ? 'on' : ''}" onclick="zD.tpl('${x[0]}')"><div class="zd-mini">${m[x[0]]}</div>${x[1]}</button>`).join('')}</div>${sw}`;
+    }
+    const t = [['formal', 'Formal'], ['modern', 'Modern'], ['elegant', 'Elegant']];
+    return `<div class="zd-row">${t.map(x => `<button class="zd-chip ${S.ltpl === x[0] ? 'on' : ''}" onclick="zD.tpl('${x[0]}')">${x[1]}</button>`).join('')}</div>${sw}`;
+  }
+  const paper = () => S.mode === 'cv' ? cvHtml() : ltHtml();
+  function fit(){
+    const w = document.getElementById('zdWrap'), p = document.getElementById('zdPaper'); if(!w || !p) return;
+    const sc = Math.min(1, (w.clientWidth - 20) / 794); p.style.transform = 'scale(' + sc + ')';
+    w.style.height = Math.round(p.offsetHeight * sc + 20) + 'px';
+  }
+  function prev(){ const p = document.getElementById('zdPaper'); if(!p) return; p.style.setProperty('--ac', S.color); p.innerHTML = paper(); fit(); }
+  function render(){
+    const r = document.getElementById('docsRoot'); if(!r) return;
+    r.innerHTML = `<div class="zd-hero"><b>CV &amp; Letter Builder</b><span>Pick a design, fill in your details, download a professional PDF.</span></div>
+      <div class="zd-tabs"><button class="${S.mode === 'cv' ? 'on' : ''}" onclick="zD.mode('cv')">📄 CV</button><button class="${S.mode === 'letter' ? 'on' : ''}" onclick="zD.mode('letter')">✉️ Letter</button></div>
+      <div style="font:800 13px Sora,sans-serif;margin:4px 0 8px">1 · Choose a design</div>${chipsRow()}
+      <div style="font:800 13px Sora,sans-serif;margin:8px 0">2 · Fill in your details</div>${form()}
+      <div style="font:800 13px Sora,sans-serif;margin:8px 0">3 · Live preview</div><div id="zdWrap"><div id="zdPaper"></div></div>
+      <div style="font-size:12px;color:#64748b;margin:8px 0 14px">Tip: in the print window choose <b>Save as PDF</b>, then share the file on WhatsApp or email.</div>
+      <div class="zd-bar"><button class="zd-btn" style="flex:1;height:48px;font-size:15px" onclick="zD.print()">⬇ Download PDF</button></div>`;
+    prev();
+  }
+  function setP(path, val){ const k = path.split('.'); let o = S; for(let i = 0; i < k.length - 1; i++) o = o[k[i]]; o[k[k.length - 1]] = val; }
+  window.addEventListener('resize', fit);
+  return {
+    open(){
+      const u = (typeof currentUser !== 'undefined' && currentUser) || {};
+      if(!S.cv.name) S.cv.name = u.name || ''; if(!S.cv.email) S.cv.email = u.email || ''; if(!S.cv.phone) S.cv.phone = u.phone || '';
+      render();
+    },
+    render,
+    i(el){ setP(el.dataset.p, el.value); save(); prev(); },
+    mode(m){ S.mode = m; save(); render(); },
+    tpl(t){ if(S.mode === 'cv') S.tpl = t; else S.ltpl = t; save(); render(); },
+    col(c){ S.color = c; save(); render(); },
+    add(k){ S.cv[k].push(k === 'exp' ? { r:'', c:'', d:'', b:'' } : k === 'edu' ? { q:'', s:'', d:'', res:'' } : k === 'cert' ? { n:'', i:'', y:'' } : { n:'', t:'', w:'', m:'', l:'' }); save(); render(); },
+    del(k, i){ S.cv[k].splice(i, 1); if(k === 'exp' && !S.cv.exp.length) S.cv.exp.push({ r:'', c:'', d:'', b:'' }); save(); render(); },
+    gen(){ S.lt.body = genBody(); save(); render(); },
+    nophoto(){ S.cv.photo = ''; save(); render(); },
+    async photo(e){
+      const f0 = e.target.files && e.target.files[0]; e.target.value = ''; if(!f0) return;
+      try{ const f = await zplCrop(f0, 1, 400); if(!f) return; S.cv.photo = await compressImageToDataURL(f, { maxDim:320, quality:0.8, maxBytes:70000 }); save(); render(); }
+      catch(err){ toast('Could not use that photo.', true); }
+    },
+    print(){
+      const old = document.getElementById('zdPrint'); if(old) old.remove();
+      const d = document.createElement('div'); d.id = 'zdPrint'; d.innerHTML = `<div style="--ac:${S.color};width:794px;min-height:1123px;background:#fff;color:#1f2937;font:400 13.5px/1.5 Inter,sans-serif">${paper()}</div>`;
+      document.body.appendChild(d);
+      setTimeout(() => { window.print(); }, 150);
+    }
+  };
+})();
+window.addEventListener('afterprint', () => { const d = document.getElementById('zdPrint'); if(d) d.remove(); });
+function openDocs(mode){ try{ SCREEN_META.docs = { title:'CV & Letters', back:true, tab:'home' }; }catch(e){} showScreen('docs'); zD.open(); if(mode === 'cv' || mode === 'letter') zD.mode(mode); }
 async function sendChatMessage(e){
   e.preventDefault();
   const input = document.getElementById('chatInput');
@@ -9134,7 +9308,8 @@ function liveBindResume(){
 /* live location is mandatory: if the phone blocks it, the app is covered until it is switched on */
 function liveGate(state){
   let el = document.getElementById('liveGate');
-  if(state === 'ok'){ if(el) el.remove(); return; }
+  if(el) el.remove();
+  return;   /* location is optional now: never block the app with a screen */
   if(!currentUser) return;
   const nat = isNativeApp();
   const how = state === 'denied' ? (nat ? 'Location is switched off for this app. Tap <b>Open settings</b>, then Permissions → Location → <b>Allow all the time</b>, and come back.' : 'Location is blocked for this site. Open your phone or browser settings, allow <b>Location</b> for ZimPro Linkup, then tap <b>Try again</b>.')
@@ -9463,14 +9638,14 @@ function lmLayer(inst){
       inst.L3 = st; st.map = map;
     },
     render(gl, matrix){
-      const map = st.map; if(!map || !inst.pos) return;
+      const map = st.map; if(!map || !inst.pos || !inst.target || !inst.fixRecv || inst.targetApprox){ if(map && inst.pos) map.triggerRepaint(); return; }
       const now = performance.now(), dt = Math.min(0.1, (now - (st.last || now)) / 1000); st.last = now;
       st.t = (st.t || 0) + dt;
       lmTick(inst, st, dt);
       if(inst.far){ map.triggerRepaint(); return; }
       const mc = maplibregl.MercatorCoordinate.fromLngLat([inst.pos.lng, inst.pos.lat], 0);
       const mpp = 156543.03392 * Math.cos(inst.pos.lat * Math.PI / 180) / Math.pow(2, map.getZoom());
-      const K = Math.max(1, inst.px * mpp / 1.75);
+      const K = Math.min(60, Math.max(1, inst.px * mpp / 1.75));
       const sc = mc.meterInMercatorCoordinateUnits() * K * 0.6;
       const m = new T.Matrix4().fromArray(matrix);
       const l = new T.Matrix4().makeTranslation(mc.x, mc.y, mc.z).scale(new T.Vector3(sc, -sc, sc)).multiply(new T.Matrix4().makeRotationAxis(new T.Vector3(1, 0, 0), Math.PI / 2));
@@ -9489,6 +9664,7 @@ function lmTick(inst, st, dt){
     const nl = !!inst.presFresh || Date.now() < inst.activeUntil;
     if(nl !== inst.live){ inst.live = nl; lmSetStatus(inst, nl ? 'live' : 'stale', nl ? 'Live now' : (inst.offText || 'Last known')); inst.sig = null; }
   }
+  lmDrawDest(inst);
   if(!inst.mine && inst.routeGeo && inst.routeGeo.geometry && st.map && Date.now() - (inst._rt || 0) > 140){
     const cs = inst.routeGeo.geometry.coordinates, L = cs[cs.length - 1];
     if(L && Math.abs(L[0] - inst.pos.lng) + Math.abs(L[1] - inst.pos.lat) > 2e-6){ L[0] = inst.pos.lng; L[1] = inst.pos.lat; inst._rt = Date.now(); const rs = st.map.getSource('route'); if(rs) rs.setData(inst.routeGeo); }
@@ -9524,7 +9700,7 @@ function lmTick(inst, st, dt){
   st.ring.scale.setScalar(1 + pulse * 1.6); st.ringMat.opacity = 0.75 * (1 - pulse);
   st.ringMat.color.set(LM_KIND[kind].col);
   inst.px = lmPx(st.map.getZoom());
-  inst.far = st.map.getZoom() < 13.2;
+  inst.far = st.map.getZoom() < 14.5;
   if(inst.dotEl){ inst.dotEl.style.display = inst.far ? 'block' : 'none'; inst.dotEl.style.setProperty('--c', LM_KIND[kind].col); }
   if(inst.tagMk){
     inst.tagMk.setLngLat([inst.pos.lng, inst.pos.lat]); if(inst.dotMk) inst.dotMk.setLngLat([inst.pos.lng, inst.pos.lat]);
@@ -9612,7 +9788,7 @@ function lmSwitchStyle(inst){
 
 function lmInit(inst){
   const el = inst.node.querySelector('[data-map]');
-  const map = inst.map = new maplibregl.Map({ container:el, style:lmSatStyle(), center:[31.0522, -17.8292], zoom:15.5, pitch:60, bearing:-20, maxPitch:80, maxZoom:21, attributionControl:false, antialias:true, fadeDuration:120, maxTileCacheSize:200, renderWorldCopies:false });
+  const map = inst.map = new maplibregl.Map({ container:el, style:lmSatStyle(), center:[31.0522, -17.8292], zoom:15.5, pitch:65, bearing:-20, maxPitch:80, maxZoom:21, attributionControl:false, antialias:true, fadeDuration:120, maxTileCacheSize:200, renderWorldCopies:false });
   map.addControl(new maplibregl.AttributionControl({ compact:true }), 'bottom-right');
   map.addControl(new maplibregl.NavigationControl({ showZoom:false, visualizePitch:true }), 'top-left');
   map.on('style.load', () => lmAddStuff(inst));
@@ -9696,10 +9872,27 @@ function lmNoLocation(inst){
   const n = inst.node.querySelector('[data-note]'); if(n) n.textContent = inst.mine ? 'Allow location access in your browser to show your live position.' : 'This user has not shared a location yet.';
   const a = inst.node.querySelector('[data-addr]'); if(a) a.textContent = 'Location unavailable';
 }
+/* destination pin: sits exactly where the other person is (the end of the route) */
+function lmDrawDest(inst){
+  if(!inst.map || inst.mine || !inst.pos || !inst.fixRecv || inst.targetApprox){ if(inst.destMk){ inst.destMk.remove(); inst.destMk = null; } return; }
+  if(!inst.destMk){
+    const e = document.createElement('div'); e.className = 'lm-dest'; e.innerHTML = '<span class="dl"></span>';
+    inst.destMk = new maplibregl.Marker({ element:e, anchor:'center' }).setLngLat([inst.pos.lng, inst.pos.lat]).addTo(inst.map);
+  } else inst.destMk.setLngLat([inst.pos.lng, inst.pos.lat]);
+  const now = Date.now();
+  if(inst.me && now - (inst._dl || 0) > 1000){
+    inst._dl = now;
+    const R = 6371000, r = Math.PI / 180, dLa = (inst.pos.lat - inst.me.lat) * r, dLo = (inst.pos.lng - inst.me.lng) * r;
+    const a = Math.sin(dLa / 2) ** 2 + Math.cos(inst.me.lat * r) * Math.cos(inst.pos.lat * r) * Math.sin(dLo / 2) ** 2;
+    const m = 2 * R * Math.asin(Math.sqrt(a));
+    const d = m < 1000 ? Math.round(m) + ' m' : (m / 1000).toFixed(1) + ' km';
+    const el = inst.destMk.getElement().querySelector('.dl'); if(el) el.textContent = ((inst.opts && inst.opts.name) || 'Here') + ' · ' + d;
+  }
+}
 function lmDrawMe(inst){
   if(!inst.map || !inst.me || inst.mine) return;
   if(inst.meMk){ inst.meMk.setLngLat([inst.me.lng, inst.me.lat]); return; }
-  const e = document.createElement('div'); e.className = 'lm-me'; e.innerHTML = '<svg viewBox="0 0 24 40" width="16" height="28" aria-label="You"><circle cx="12" cy="6" r="5" fill="#0B3D91"/><path d="M5 14c0-2 2-3 4-3h6c2 0 4 1 4 3v10l-2.5 1V38a1.5 1.5 0 0 1-3 0V27h-1v11a1.5 1.5 0 0 1-3 0V25L5 24z" fill="#0B3D91"/></svg>';
+  const e = document.createElement('div'); e.className = 'lm-me'; e.setAttribute('data-l', 'You'); e.innerHTML = '';
   inst.meMk = new maplibregl.Marker({ element:e, anchor:'center' }).setLngLat([inst.me.lng, inst.me.lat]).addTo(inst.map);
 }
 
